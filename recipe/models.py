@@ -79,7 +79,3 @@ class Recipe(models.Model):
 
         return total_calories
 
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        # self.total_calories = self.calculate_total_calories()
-        super().save(*args, **kwargs)
