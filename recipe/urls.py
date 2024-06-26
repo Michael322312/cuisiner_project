@@ -22,7 +22,6 @@ urlpatterns = [
     path("create_product/", ProductCreateView.as_view(), name="create_product"),
     path("delete_product/<int:pk>", ProductDeleteView.as_view(), name="delete_product"),
     path("update_product/<int:pk>", ProductUpdateView.as_view(), name="update_product"),
-    path("create_recipe/<int:id>", manage_recipes, name="create_recipe"),
     path("create_recipe/", manage_recipes, name="create_recipe"),
 ]
 

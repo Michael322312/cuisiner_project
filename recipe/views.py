@@ -6,36 +6,19 @@ from recipe.models import Category, Product, RecipeIngridient, Recipe
 from django.urls import reverse_lazy
 from django.contrib.admin.views.decorators import staff_member_required
 from django.utils.decorators import method_decorator
-from recipe.forms import CategoryCreateForm, ProductCreateForm, RecipeCreateForm
+from recipe.forms import CategoryCreateForm, ProductCreateForm, RecipeCreateForm, IngridientInlineFormSet
 from django.http import HttpResponseRedirect
-from django.forms import inlineformset_factory
 
 
-def manage_recipes(request, id=None):
-    if id:
-        recipe = Recipe.objects.get(
-            pk=id
-        )  # if this is an edit form, replace the author instance with the existing one
-    else:
-        recipe = Recipe()
+def manage_recipes(request):
+    recipe = Recipe()
 
     recipe_form = RecipeCreateForm(instance=recipe)  # setup a form for the parent
 
-    IngridientInlineFormSet = inlineformset_factory(
-        Recipe,
-        RecipeIngridient,
-        fields=(
-            "product",
-            "weight",
-            "weight_unit",
-        ),
-    )
     formset = IngridientInlineFormSet(instance=recipe)
 
     if request.method == "POST":
         recipe_form = RecipeCreateForm(request.POST)
-        if id:
-            recipe_form = RecipeCreateForm(request.POST, instance=recipe)
 
         formset = IngridientInlineFormSet(request.POST, request.FILES)
         if recipe_form.is_valid():
@@ -48,7 +31,8 @@ def manage_recipes(request, id=None):
                 created_recipe.author = request.user
                 created_recipe.save()
                 formset.save()
-                created_recipe.total_calories = created_recipe.calculate_total_calories()
+                total_calories = created_recipe.calculate_total_calories()
+                created_recipe.total_calories = total_calories
                 created_recipe.save()
                 return HttpResponseRedirect(reverse_lazy('recipe:category_list'))
 
