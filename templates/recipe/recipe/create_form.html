@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <style>
+        body {
+            background-image: url('{%static "img/create_recipe.jpg"%}');
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+        }
+    </style>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#add-ingredient').click(function() {
+                var form_idx = $('#id_form-TOTAL_FORMS').val();
+                $('#ingredients-formset').append($('#empty-form').html().replace(/__prefix__/g, form_idx));
+                $('#id_form-TOTAL_FORMS').val(parseInt(form_idx) + 1);
+            });
+        });
+    </script>
+
+    <form method="POST" class="mx-auto w-50 bg-white p-4 mt-5 rounded">
+        {% csrf_token %}
+        <p class="fs-2 fw-light">Create recipe</p>
+        <div class="mb-3">
+            <label class="form-label" for="title">Recipe title</label>
+            {{recipe_form.title}}
+            <div id="" class="form-text">We'll never share your email with anyone else.</div>
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="main_image">{{form.main_image.label}}</label>
+            {{recipe_form.main_image}}
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="url_yt_video">Link for YouTube video</label>
+            {{recipe_form.url_yt_video}}
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="introduction">Recepie introduction</label>
+            {{recipe_form.introduction}}
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="ingredients">Recepie ingredients</label>
+            {{formset}}
+        </div>
+        
+        <div class="mb-3">
+            <label class="form-label" for="recipe_text">Recepie text</label>
+            {{recipe_form.recipe_text}}
+        </div>
+        <button type="submit" class="btn btn-primary">Create</button>
+    </form>
+
+{% endblock %}
