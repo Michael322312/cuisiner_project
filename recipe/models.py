@@ -61,7 +61,7 @@ class Recipe(models.Model):
 
     def calculate_total_calories(self):
         total_calories = 0
-        for recipe_ingredient in self.ingredients:
+        for recipe_ingredient in self.ingredients.all():
             if (
                 recipe_ingredient.weight_unit == "ML"
                 or recipe_ingredient.weight_unit == "G"
