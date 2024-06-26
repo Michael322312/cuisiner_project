@@ -47,3 +47,40 @@ class CategoryUpdateView(UpdateView):
     template_name = "recipe/category/update_form.html"
     success_url = reverse_lazy("recipe:category_list")
     form_class = CategoryCreateForm
+
+
+@method_decorator(staff_member_required, name="dispatch")
+class ProductCreateView(CreateView):
+    model = Product
+    template_name = "recipe/product/create_form.html"
+    form_class = ProductCreateForm
+    success_url = reverse_lazy("recipe:product_list")
+
+
+@method_decorator(staff_member_required, name="dispatch")
+class ProductListView(ListView):
+    model = Product
+    context_object_name = "products"
+    template_name = "recipe/product/list_view.html"
+    paginate_by = 6
+
+    def get_queryset(self):
+        query = self.request.GET.get("search")
+        if query:
+            return Product.objects.filter(name__icontains=query)
+        return Product.objects.all()
+
+
+@method_decorator(staff_member_required, name="dispatch")
+class ProductDeleteView(DeleteView):
+    model = Product
+    template_name = "recipe/product/delete_confirm.html"
+    success_url = reverse_lazy("recipe:product_list")
+
+
+@method_decorator(staff_member_required, name="dispatch")
+class ProductUpdateView(UpdateView):
+    model = Product
+    template_name = "recipe/product/update_form.html"
+    success_url = reverse_lazy("recipe:product_list")
+    form_class = ProductCreateForm
