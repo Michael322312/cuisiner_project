@@ -1,5 +1,23 @@
 from django import forms
 from recipe.models import Category, Product, Recipe, RecipeIngridient
+from django.forms import inlineformset_factory
+
+
+IngridientInlineFormSet = inlineformset_factory(
+    Recipe,
+    RecipeIngridient,
+    fields=(
+        "product",
+        "weight",
+        "weight_unit",
+    ),
+    extra=1,
+    widgets={
+        'product': forms.Select(attrs={'class': ''}),
+        'weight': forms.TextInput(attrs={'class': '', 'type': 'number'}),
+        'weight_unit': forms.Select(attrs={'class': ''})
+    }
+)
 
 
 class RecipeIngredientForm(forms.ModelForm):
