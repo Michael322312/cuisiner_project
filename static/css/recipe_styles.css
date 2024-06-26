@@ -1,0 +1,23 @@
+body {
+    background-image: url("../img/create_recipe.jpg");
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+}
+
+.ing_list {
+    display: flex;
+    flex-direction: column; /* Ensures each .ing-form is on a new line */
+    gap: 10px; /* Space between form groups */
+}
+
+.ing-form {
+    display: flex;
+    gap: 10px; /* Space between inputs within each form group */
+    align-items: center; /* Vertically center the items */
+}
+
+.ing-form input, .ing-form label, .ing-form button {
+    flex: 1; /* Adjust the size as needed */
+    margin: 0; /* Remove default margin */
+}

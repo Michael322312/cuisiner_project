@@ -1,15 +1,8 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-    <style>
-        body {
-            background-image: url('{%static "img/create_recipe.jpg"%}');
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            background-size: cover;
-        }
-    </style>
-    
+    <link rel="stylesheet" href="{% static 'css/recipe_styles.css' %}">  
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
@@ -42,8 +35,18 @@
             {{recipe_form.introduction}}
         </div>
         <div class="mb-3">
-            <label class="form-label" for="ingredients">Recepie ingredients</label>
-            {{formset}}
+            <label class="form-label" for="ingredients">Recipe ingredients</label>
+            <button id="add-ingredient" type="button" class="btn btn-secondary mb-2">Add ingredient</button>
+            <div id="ingredients-formset" class="ing_list" >
+                {% for form in formset %}
+                    <div class="ing-form">
+                        {{ form.product }}
+                        {{ form.weight }}
+                        {{ form.weight_unit }}
+                    </div>
+                {% endfor %}
+            </div>
+            {{ formset.management_form }}
         </div>
         
         <div class="mb-3">
@@ -52,5 +55,9 @@
         </div>
         <button type="submit" class="btn btn-primary">Create</button>
     </form>
-
+    <div id="empty-form" style="display: none;">
+        <div class="ing-form">
+            {{ formset.empty_form.as_p }}
+        </div>
+    </div>
 {% endblock %}
