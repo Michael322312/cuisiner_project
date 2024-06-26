@@ -48,3 +48,38 @@ class RecipeIngridient(models.Model):
 
     def __str__(self):
         return f"{self.product} {self.weight} {self.weight_unit}"
+
+
+class Recipe(models.Model):
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="recipes")
+    title = models.CharField(max_length=63)
+    main_image = models.ImageField(upload_to="recepie/", blank=True, null=True)
+    url_yt_video = models.URLField(blank=True, null=True)
+    introduction = models.TextField(blank=True, null=True)
+    recipe_text = models.TextField()
+    total_calories = models.IntegerField(default=0)
+
+    def calculate_total_calories(self):
+        total_calories = 0
+        for recipe_ingredient in self.ingredients:
+            if (
+                recipe_ingredient.weight_unit == "ML"
+                or recipe_ingredient.weight_unit == "G"
+            ):
+                total_calories += (
+                    recipe_ingredient.product.calories / 100 * recipe_ingredient.weight
+                )
+            elif (
+                recipe_ingredient.weight_unit == "L"
+                or recipe_ingredient.weight_unit == "KG"
+            ):
+                total_calories += (
+                    recipe_ingredient.product.calories * 10 * recipe_ingredient.weight
+                )
+
+        return total_calories
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        # self.total_calories = self.calculate_total_calories()
+        super().save(*args, **kwargs)
