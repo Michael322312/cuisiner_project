@@ -48,7 +48,9 @@ def manage_recipes(request, id=None):
                 created_recipe.author = request.user
                 created_recipe.save()
                 formset.save()
-                return reverse_lazy("recipe:category_list")
+                created_recipe.total_calories = created_recipe.calculate_total_calories()
+                created_recipe.save()
+                return HttpResponseRedirect(reverse_lazy('recipe:category_list'))
 
     context = {"recipe_form": recipe_form, "formset": formset}
 
@@ -67,7 +69,6 @@ class RecipeCreateView(CreateView):
 @method_decorator(staff_member_required, name="dispatch")
 class CategoryListView(ListView):
     model = Category
-
     context_object_name = "categories"
     template_name = "recipe/category/list_view.html"
     paginate_by = 6
