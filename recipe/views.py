@@ -11,6 +11,59 @@ from django.http import HttpResponseRedirect
 from django.forms import inlineformset_factory
 
 
+def manage_recipes(request, id=None):
+    if id:
+        recipe = Recipe.objects.get(
+            pk=id
+        )  # if this is an edit form, replace the author instance with the existing one
+    else:
+        recipe = Recipe()
+
+    recipe_form = RecipeCreateForm(instance=recipe)  # setup a form for the parent
+
+    IngridientInlineFormSet = inlineformset_factory(
+        Recipe,
+        RecipeIngridient,
+        fields=(
+            "product",
+            "weight",
+            "weight_unit",
+        ),
+    )
+    formset = IngridientInlineFormSet(instance=recipe)
+
+    if request.method == "POST":
+        recipe_form = RecipeCreateForm(request.POST)
+        if id:
+            recipe_form = RecipeCreateForm(request.POST, instance=recipe)
+
+        formset = IngridientInlineFormSet(request.POST, request.FILES)
+        if recipe_form.is_valid():
+            created_recipe = recipe_form.save(commit=False)
+            formset = IngridientInlineFormSet(
+                request.POST, request.FILES, instance=created_recipe
+            )
+
+            if formset.is_valid():
+                created_recipe.author = request.user
+                created_recipe.save()
+                formset.save()
+                return reverse_lazy("recipe:category_list")
+
+    context = {"recipe_form": recipe_form, "formset": formset}
+
+    return render(
+        template_name="recipe/recipe/create_form.html", context=context, request=request
+    )
+
+
+class RecipeCreateView(CreateView):
+    model = Recipe
+    template_name = "recipe/recipe/create_form.html"
+    form_class = RecipeCreateForm
+    success_url = reverse_lazy("recipe:category_list")
+
+
 @method_decorator(staff_member_required, name="dispatch")
 class CategoryListView(ListView):
     model = Category
