@@ -14,8 +14,13 @@ IngridientInlineFormSet = inlineformset_factory(
     extra=1,
     widgets={
         'product': forms.Select(attrs={'class': ''}),
-        'weight': forms.TextInput(attrs={'class': '', 'type': 'number'}),
+        'weight': forms.NumberInput(attrs={'class': '', 'type': 'number', 'min': '0',}),
         'weight_unit': forms.Select(attrs={'class': ''})
+    },
+    labels={
+        'product': '',
+        'weight': '',
+        'weight_unit': ''
     }
 )
 
@@ -39,7 +44,6 @@ class RecipeCreateForm(forms.ModelForm):
                 attrs={"class": "form-control", "type": "url"}
             ),
             "introduction": forms.TextInput(attrs={"class": "form-control"}),
-            "ingredients": forms.Textarea(attrs={"class": "form-control"}),
             "recipe_text": forms.TextInput(attrs={"class": "form-control"}),
         }
 
