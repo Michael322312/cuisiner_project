@@ -10,7 +10,7 @@ from recipe.forms import CategoryCreateForm, ProductCreateForm, RecipeCreateForm
 from django.http import HttpResponseRedirect
 
 
-def manage_recipes(request):
+def create_recipe(request):
     recipe = Recipe()
 
     recipe_form = RecipeCreateForm(instance=recipe)  # setup a form for the parent
@@ -18,7 +18,7 @@ def manage_recipes(request):
     formset = IngridientInlineFormSet(instance=recipe)
 
     if request.method == "POST":
-        recipe_form = RecipeCreateForm(request.POST)
+        recipe_form = RecipeCreateForm(request.POST, request.FILES)
 
         formset = IngridientInlineFormSet(request.POST, request.FILES)
         if recipe_form.is_valid():
@@ -43,11 +43,12 @@ def manage_recipes(request):
     )
 
 
-class RecipeCreateView(CreateView):
+
+class RecipeListView(ListView):
     model = Recipe
-    template_name = "recipe/recipe/create_form.html"
-    form_class = RecipeCreateForm
-    success_url = reverse_lazy("recipe:category_list")
+    template_name = "recipe/recipe/list_view.html"
+    context_object_name = "recipes"
+    paginate_by = 10
 
 
 @method_decorator(staff_member_required, name="dispatch")
@@ -55,7 +56,7 @@ class CategoryListView(ListView):
     model = Category
     context_object_name = "categories"
     template_name = "recipe/category/list_view.html"
-    paginate_by = 6
+    paginate_by = 10
 
     def get_queryset(self):
         query = self.request.GET.get("search")
@@ -100,7 +101,7 @@ class ProductListView(ListView):
     model = Product
     context_object_name = "products"
     template_name = "recipe/product/list_view.html"
-    paginate_by = 6
+    paginate_by = 10
 
     def get_queryset(self):
         query = self.request.GET.get("search")
