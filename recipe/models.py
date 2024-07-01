@@ -1,6 +1,8 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.auth.models import User
+from django.db.models.signals import pre_delete
+from django.dispatch.dispatcher import receiver
 
 
 UNIT_CHOISES = [("ML", "ml"), ("L", "l"), ("G", "g"), ("KG", "kg")]
@@ -53,7 +55,7 @@ class RecipeIngridient(models.Model):
 class Recipe(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="recipes")
     title = models.CharField(max_length=63)
-    main_image = models.ImageField(upload_to="recepie/", blank=True, null=True)
+    main_image = models.ImageField(upload_to="recipe/", blank=True)
     url_yt_video = models.URLField(blank=True, null=True)
     introduction = models.TextField(blank=True, null=True)
     recipe_text = models.TextField()
@@ -79,3 +81,8 @@ class Recipe(models.Model):
 
         return total_calories
 
+
+@receiver(pre_delete, sender=Recipe)
+def image_model_delete(sender, instance, **kwargs):
+    if instance.image.name:
+        instance.image.delete(False)
