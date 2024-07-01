@@ -3,6 +3,7 @@ body {
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-size: cover;
+    
 }
 
 .ing_list {
@@ -20,4 +21,38 @@ body {
 .ing-form input, .ing-form label, .ing-form button {
     flex: 1; /* Adjust the size as needed */
     margin: 0; /* Remove default margin */
+    max-width: 100px;
+
+}
+
+.recipe {
+    font-size: medium;
+    font-weight: light;
+
+    width: fit-content;
+}
+
+.recipe input{
+    max-width: 700px;
+}
+
+@media (max-width: 600px) {
+
+    .recipe {
+        min-width: 400px;
+    }
+
+}
+
+@media (min-width: 601px) and (max-width: 1200px) {
+    .recipe {
+        min-width: 500px;
+    }
+}
+
+@media (min-width: 1201px) {
+    .recipe {
+        min-width: 500px;
+        max-width: 900px;
+    }
 }
