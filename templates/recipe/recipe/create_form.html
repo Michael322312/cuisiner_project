@@ -4,40 +4,31 @@
     <link rel="stylesheet" href="{% static 'css/recipe_styles.css' %}">  
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            $('#add-ingredient').click(function() {
-                var form_idx = $('#id_form-TOTAL_FORMS').val();
-                $('#ingredients-formset').append($('#empty-form').html().replace(/__prefix__/g, form_idx));
-                $('#id_form-TOTAL_FORMS').val(parseInt(form_idx) + 1);
-            });
-        });
-    </script>
 
-    <form method="POST" class="mx-auto w-50 bg-white p-4 mt-5 rounded">
+    <form method="POST" enctype="multipart/form-data" class="mx-auto w-50 bg-white p-4 mt-5 rounded">
         {% csrf_token %}
         <p class="fs-2 fw-light">Create recipe</p>
         <div class="mb-3">
             <label class="form-label" for="title">Recipe title</label>
-            {{recipe_form.title}}
+            {{ recipe_form.title }}
             <div id="" class="form-text">We'll never share your email with anyone else.</div>
         </div>
         <div class="mb-3">
-            <label class="form-label" for="main_image">{{form.main_image.label}}</label>
-            {{recipe_form.main_image}}
+            <label class="form-label" for="main_image">{{ recipe_form.main_image.label }}</label>
+            {{ recipe_form.main_image }}
         </div>
         <div class="mb-3">
             <label class="form-label" for="url_yt_video">Link for YouTube video</label>
-            {{recipe_form.url_yt_video}}
+            {{ recipe_form.url_yt_video }}
         </div>
         <div class="mb-3">
-            <label class="form-label" for="introduction">Recepie introduction</label>
-            {{recipe_form.introduction}}
+            <label class="form-label" for="introduction">Recipe introduction</label>
+            {{ recipe_form.introduction }}
         </div>
         <div class="mb-3">
             <label class="form-label" for="ingredients">Recipe ingredients</label>
             <button id="add-ingredient" type="button" class="btn btn-secondary mb-2">Add ingredient</button>
-            <div id="ingredients-formset" class="ing_list" >
+            <div id="ingredients-formset" class="ing_list">
                 {% for form in formset %}
                     <div class="ing-form">
                         {{ form.product }}
@@ -50,8 +41,8 @@
         </div>
         
         <div class="mb-3">
-            <label class="form-label" for="recipe_text">Recepie text</label>
-            {{recipe_form.recipe_text}}
+            <label class="form-label" for="recipe_text">Recipe text</label>
+            {{ recipe_form.recipe_text }}
         </div>
         <button type="submit" class="btn btn-primary">Create</button>
     </form>
@@ -60,4 +51,19 @@
             {{ formset.empty_form.as_p }}
         </div>
     </div>
+
+    <script>
+        $(document).ready(function() {
+            $('#add-ingredient').click(function() {
+                var formCount = $('#ingredients-formset .ing-form').length;
+                var emptyFormHtml = $('#empty-form .ing-form').html().replace(/__prefix__/g, formCount);
+                var newForm = $('<div class="ing-form">' + emptyFormHtml + '</div>');
+                $('#ingredients-formset').append(newForm);
+
+                // Update the total forms count
+                var totalForms = $('#id_ingredients-TOTAL_FORMS');
+                totalForms.val(parseInt(totalForms.val()) + 1);
+            });
+        });
+    </script>
 {% endblock %}
