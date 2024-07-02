@@ -3,20 +3,28 @@
 {% block content %}
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">  
 
-    <div class="m-3 ms-2">
+    <div class="page-container">
+    
         <div class="container">
             {% for recipe in recipes %}
-                <div class="card m-3" style="width: 14rem;">
-                    <img src="/media/{{recipe.main_image}}" class="card-img-top" alt="..." style="object-fit: cover; height: 200px;">
-                    <div class="card-body">
-                        <div class="card-title">{{recipe.title}}</div>
+                <a href="{%url 'recipe:recipe' recipe.id%}" style="text-decoration: none;">
+                    <div class="card m-3 item2" style="width: 14rem;">
+                        <img src="/media/{{recipe.main_image}}" class="card-img-top" alt="..." style="object-fit: cover; height: 180px;">
+                        <div class="card-body">
+                            <div class="card-title fs-4">{{recipe.title}}</div>
+                            <div>
+                                {{recipe.author}}
+                                <br>
+                                {{recipe.upload_date}}
+                            </div>
+                        </div>
                     </div>
-                </div>
+                </a>
             {%endfor%}
         </div>
         {% if paginator.page_range|length > 1%}
             <nav aria-label="Page navigation example">
-                <ul class="pagination ms-1 mt-3">
+                <ul class="pagination ms-5 mt-3">
                     {% for page_num in paginator.page_range %}
                         <li class="page-item"><a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a></li>
                     {% endfor %}
