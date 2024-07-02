@@ -28,13 +28,13 @@ body {
 .recipe {
     font-size: medium;
     font-weight: light;
-
     width: fit-content;
 }
 
 .recipe input{
     max-width: 700px;
 }
+
 
 @media (max-width: 600px) {
 
