@@ -4,11 +4,10 @@ from django.contrib.auth.models import User
 from django.db.models.signals import pre_delete
 from django.dispatch.dispatcher import receiver
 
-
 UNIT_CHOISES = [("ML", "ml"), ("L", "l"), ("G", "g"), ("KG", "kg")]
 
 class Category(models.Model):
-    name = models.CharField(max_length=63)
+    name = models.CharField(max_length=63, unique=True)
 
     def __str__(self):
         return self.name
@@ -19,7 +18,7 @@ class Category(models.Model):
 
 
 class Product(models.Model):
-    name = models.CharField(max_length=63)
+    name = models.CharField(max_length=63, unique=True)
     calories = models.IntegerField(
         validators=[MinValueValidator(0), MaxValueValidator(999999)]
     )
@@ -59,6 +58,7 @@ class Recipe(models.Model):
     url_yt_video = models.URLField(blank=True, null=True)
     introduction = models.TextField(blank=True, null=True)
     recipe_text = models.TextField()
+    upload_date = models.DateField(auto_now=True)
     total_calories = models.IntegerField(default=0)
 
     def calculate_total_calories(self):
@@ -80,9 +80,12 @@ class Recipe(models.Model):
                 )
 
         return total_calories
+    
+    class Meta:
+        ordering = ['-id']
 
 
 @receiver(pre_delete, sender=Recipe)
 def image_model_delete(sender, instance, **kwargs):
-    if instance.image.name:
-        instance.image.delete(False)
+    if instance.main_image.name:
+        instance.main_image.delete(False)
