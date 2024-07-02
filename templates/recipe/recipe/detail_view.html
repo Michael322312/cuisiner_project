@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">  
+    
+    <div class="rec_container">
+
+        <img src="/media/{{recipe.main_image}}" alt="dish photo" class="rec_img" >
+
+        <div>
+            <div class="fs-3">{{recipe.title}}</div>
+            {{recipe.introduction}}
+        </div>
+    </div>
+    <div class="float">
+        ejdsk.d
+    </div>
+{% endblock %}

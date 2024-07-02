@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.views.generic import CreateView, DeleteView, UpdateView, ListView
+from django.views.generic import CreateView, DeleteView, UpdateView, ListView, DetailView
 from django.core.paginator import Paginator
 from django.template.defaulttags import register
 from recipe.models import Category, Product, RecipeIngridient, Recipe
@@ -48,7 +48,13 @@ class RecipeListView(ListView):
     model = Recipe
     template_name = "recipe/recipe/list_view.html"
     context_object_name = "recipes"
-    paginate_by = 10
+    paginate_by = 20
+
+
+class RecipeDetailView(DetailView):
+    model = Recipe
+    template_name = "recipe/recipe/detail_view.html"
+    context_object_name = "recipe"
 
 
 @method_decorator(staff_member_required, name="dispatch")
@@ -56,7 +62,7 @@ class CategoryListView(ListView):
     model = Category
     context_object_name = "categories"
     template_name = "recipe/category/list_view.html"
-    paginate_by = 10
+    paginate_by = 20
 
     def get_queryset(self):
         query = self.request.GET.get("search")
@@ -84,7 +90,7 @@ class CategoryCreateView(CreateView):
 class CategoryUpdateView(UpdateView):
     model = Category
     template_name = "recipe/category/update_form.html"
-    success_url = reverse_lazy("recipe:category_list")
+    success_url = reverse_lazy("recipe:create_category")
     form_class = CategoryCreateForm
 
 
@@ -93,7 +99,7 @@ class ProductCreateView(CreateView):
     model = Product
     template_name = "recipe/product/create_form.html"
     form_class = ProductCreateForm
-    success_url = reverse_lazy("recipe:product_list")
+    success_url = reverse_lazy("recipe:create_product")
 
 
 @method_decorator(staff_member_required, name="dispatch")
@@ -101,7 +107,7 @@ class ProductListView(ListView):
     model = Product
     context_object_name = "products"
     template_name = "recipe/product/list_view.html"
-    paginate_by = 10
+    paginate_by = 20
 
     def get_queryset(self):
         query = self.request.GET.get("search")

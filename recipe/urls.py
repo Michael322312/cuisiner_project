@@ -10,6 +10,7 @@ from recipe.views import (
     ProductCreateView,
     RecipeListView,
     create_recipe,
+    RecipeDetailView
 )
 from django.urls import reverse_lazy
 
@@ -23,7 +24,8 @@ urlpatterns = [
     path("delete_product/<int:pk>", ProductDeleteView.as_view(), name="delete_product"),
     path("update_product/<int:pk>", ProductUpdateView.as_view(), name="update_product"),
     path("create_recipe/", create_recipe, name="create_recipe"),
-    path("recipes/", RecipeListView.as_view(), name= 'recipe_list')
+    path("recipes/", RecipeListView.as_view(), name= 'recipe_list'),
+    path("recipes/<int:pk>", RecipeDetailView.as_view(), name='recipe')
 ]
 
 app_name = "recipe"
