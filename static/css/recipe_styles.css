@@ -22,7 +22,6 @@ body {
     flex: 1; /* Adjust the size as needed */
     margin: 0; /* Remove default margin */
     max-width: 100px;
-
 }
 
 .recipe {

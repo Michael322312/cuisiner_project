@@ -7,20 +7,25 @@
     
         <div class="container">
             {% for recipe in recipes %}
-                <a href="{%url 'recipe:recipe' recipe.id%}" style="text-decoration: none;">
-                    <div class="card m-3 item2" style="width: 14rem;">
-                        <img src="/media/{{recipe.main_image}}" class="card-img-top" alt="..." style="object-fit: cover; height: 180px;">
+                <a href="{% url 'recipe:recipe' recipe.id %}" style="text-decoration: none;">
+                    <div class="card m-3 item" style="overflow: hidden;">
+                        {% if recipe.main_image %}
+                            <img src="/media/{{ recipe.main_image }}" class="card-img-top" alt="..." style="object-fit: cover; height: 170px; width: 100%;">
+                        {% else %}
+                            <img src="{% static 'img/def_recipe.jpg' %}" class="card-img-top" alt="..." style="object-fit: cover; height: 170px; width: 100%;">
+
+                        {%endif%}
                         <div class="card-body">
-                            <div class="card-title fs-4">{{recipe.title}}</div>
+                            <div class="card-title2 fs-5">{{ recipe.title }}</div>
                             <div>
-                                {{recipe.author}}
+                                {{ recipe.author }}
                                 <br>
-                                {{recipe.upload_date}}
+                                {{ recipe.upload_date }}
                             </div>
                         </div>
                     </div>
                 </a>
-            {%endfor%}
+            {% endfor %}
         </div>
         {% if paginator.page_range|length > 1%}
             <nav aria-label="Page navigation example">

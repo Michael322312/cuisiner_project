@@ -1,18 +1,32 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">  
+    <link rel="stylesheet" href="{% static 'css/styleы.css' %}"> 
+    <img src="/media/{{recipe.main_image}}" alt="{{ recipe.title }}" style="width: 200px;">
+    <br>
+    {{recipe.title}}
+    {{recipe.author}}
     
-    <div class="rec_container">
+    {{recipe.upload_date}}
+    <br> 
+    {%if recipe.introduction%}
+        {{recipe.introduction}}
+    {%endif%}
 
-        <img src="/media/{{recipe.main_image}}" alt="dish photo" class="rec_img" >
+    Total calories{{recipe.total_calories}}
+    <br>
 
-        <div>
-            <div class="fs-3">{{recipe.title}}</div>
-            {{recipe.introduction}}
-        </div>
-    </div>
-    <div class="float">
-        ejdsk.d
-    </div>
+    {%if recipe.url_yt_video %}
+        {{recipe.url_yt_video}}
+    {%endif%}
+
+    {%for ingridient in recipe.ingredients.all%}
+        {{ingridient}}
+        <br>
+    {%endfor%}
+
+    {%if recipe.recipe_text %}
+        {{recipe.recipe_text|linebreaks}}
+    {%endif%}
+
 {% endblock %}

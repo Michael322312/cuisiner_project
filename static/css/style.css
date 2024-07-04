@@ -4,16 +4,15 @@ body {
 
 
 .item {
-    flex: 1 1 150px;
+    flex: 1 1 200px;
     background: #ffffff;
     margin: 10px;
     padding: 10px;
     box-sizing: border-box;
     width: fit-content;
     font-size: small;
-    max-height: 100px;
-    min-width: 200px;
-    max-width: 300px;
+    width: 300px;
+    
 }
 
 .page-container {
@@ -22,6 +21,7 @@ body {
 }
 
 .container {
+    width: 90%;
     display: flex;
     flex-flow: row wrap;
     align-items: flex-start; /* Aligns items to the start vertically */
@@ -30,9 +30,16 @@ body {
 .rec_img {
     object-fit: cover;
     width: 500px;
-
-    
 }
+
+
+.card-title2 {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
 
 .item2 {
     flex: 1 1 100px;
