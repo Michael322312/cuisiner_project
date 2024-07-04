@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.db.models.signals import pre_delete
 from django.dispatch.dispatcher import receiver
 
-UNIT_CHOISES = [("ML", "ml"), ("L", "l"), ("G", "g"), ("KG", "kg")]
+UNIT_CHOISES = [("ML", "ml"), ("L", "l"), ("G", "g"), ("KG", "kg"), ("PIECES","pcs")]
 
 class Category(models.Model):
     name = models.CharField(max_length=63, unique=True)
@@ -28,6 +28,10 @@ class Product(models.Model):
         related_name="products",
         null=True,
         blank=True,
+    )
+
+    piece_weight = models.FloatField(
+        validators=[MinValueValidator(0), MaxValueValidator(999999)], blank=True,  null=True
     )
 
     def __str__(self):
@@ -77,6 +81,10 @@ class Recipe(models.Model):
             ):
                 total_calories += (
                     recipe_ingredient.product.calories * 10 * recipe_ingredient.weight
+                )
+            elif recipe_ingredient.weight_unit == "PEICES":
+                total_calories += (
+                    recipe_ingredient.product.calories / 100 * recipe_ingredient.weight * recipe_ingredient.piece_weight
                 )
 
         return total_calories

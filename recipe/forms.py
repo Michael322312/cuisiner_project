@@ -14,7 +14,7 @@ IngridientInlineFormSet = inlineformset_factory(
     extra=1,
     widgets={
         'product': forms.Select(attrs={'class': ''}),
-        'weight': forms.NumberInput(attrs={'class': 'form-control', 'type': 'number', 'min': '0', 'style': 'width:120%', 'placeholder': 'Weight'}),
+        'weight': forms.NumberInput(attrs={'class': 'form-control', 'type': 'number', 'min': '0', 'style': 'width:140%; min-width: 120px', 'placeholder': 'Weight'}),
         'weight_unit': forms.Select(attrs={'class': 'form-control', 'style': 'width: 50px'})
     },
     labels={
@@ -65,11 +65,12 @@ class ProductCreateForm(forms.ModelForm):
     class Meta:
         model = Product
 
-        fields = ["name", "calories", "category"]
+        fields = ["name", "calories", "category", 'piece_weight']
 
         widgets = {
             "name": forms.TextInput(attrs={"class": "form-control"}),
             "category": forms.Select(attrs={"class": "form-select"}),
+            "piece_weight": forms.NumberInput(attrs={"class": "form-select", "placeholder": "Piece weight", 'type': 'number', 'min': '0',})
         }
 
-        labels = {"name": "Name", "calories": "Calories (per 100 grams)"}
+        labels = {"name": "Name", "calories": "Calories (per 100 grams)", "piece_weight": 'Enter piece weight in grams'}
