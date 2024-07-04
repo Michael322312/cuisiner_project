@@ -8,12 +8,19 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.utils.decorators import method_decorator
 from recipe.forms import CategoryCreateForm, ProductCreateForm, RecipeCreateForm, IngridientInlineFormSet
 from django.http import HttpResponseRedirect
+import re
+
+
+def embed_url(video_url):
+    regex = r"(?:https:\/\/)?(?:www\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=)?(.+)"
+
+    return re.sub(regex, r"https://www.youtube.com/embed/\1",video_url)
 
 
 def create_recipe(request):
     recipe = Recipe()
 
-    recipe_form = RecipeCreateForm(instance=recipe)  # setup a form for the parent
+    recipe_form = RecipeCreateForm(instance=recipe)
 
     formset = IngridientInlineFormSet(instance=recipe)
 
@@ -28,6 +35,8 @@ def create_recipe(request):
             )
 
             if formset.is_valid():
+                if created_recipe.url_yt_video:
+                    created_recipe.url_yt_video = embed_url(created_recipe.url_yt_video)
                 created_recipe.author = request.user
                 created_recipe.save()
                 formset.save()
