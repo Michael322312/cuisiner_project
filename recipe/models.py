@@ -1,6 +1,6 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
-from django.contrib.auth.models import User
+from user_system.models import CustomUser
 from django.db.models.signals import pre_delete
 from django.dispatch.dispatcher import receiver
 
@@ -41,6 +41,11 @@ class Product(models.Model):
         ordering = ["-id"]
 
 
+class Diet(models.Model):
+    forriben_categories = models.ManyToManyField(Category)
+    calloires_per_dish = models.IntegerField(default=0)
+
+
 class RecipeIngridient(models.Model):
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
     weight = models.FloatField(
@@ -56,7 +61,7 @@ class RecipeIngridient(models.Model):
 
 
 class Recipe(models.Model):
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="recipes")
+    author = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="recipes")
     title = models.CharField(max_length=63)
     main_image = models.ImageField(upload_to="recipe/", blank=True)
     url_yt_video = models.URLField(blank=True, null=True)
@@ -64,28 +69,25 @@ class Recipe(models.Model):
     recipe_text = models.TextField()
     upload_date = models.DateField(auto_now=True)
     total_calories = models.IntegerField(default=0)
+    is_dividible = models.BooleanField(default=False)
 
     def calculate_total_calories(self):
+        unit_type = {
+            "small": ["ML", "G"],
+            "big": ["L", "KG"],
+            "un_div": ["Pieces"]
+        }
         total_calories = 0
-        for recipe_ingredient in self.ingredients.all():
-            if (
-                recipe_ingredient.weight_unit == "ML"
-                or recipe_ingredient.weight_unit == "G"
-            ):
-                total_calories += (
-                    recipe_ingredient.product.calories / 100 * recipe_ingredient.weight
-                )
-            elif (
-                recipe_ingredient.weight_unit == "L"
-                or recipe_ingredient.weight_unit == "KG"
-            ):
-                total_calories += (
-                    recipe_ingredient.product.calories * 10 * recipe_ingredient.weight
-                )
-            elif recipe_ingredient.weight_unit == "PEICES":
-                total_calories += (
-                    recipe_ingredient.product.calories / 100 * recipe_ingredient.weight * recipe_ingredient.piece_weight
-                )
+
+        for ingredient in self.ingredients.all():
+            result = ingredient.product.calories * ingredient.weight
+
+            if ingredient.weight_unit in unit_type["small"]:
+                total_calories += result / 100 
+            elif ingredient.weight_unit in unit_type["big"]:
+                total_calories += result * 10
+            elif ingredient.weight_unit in unit_type["un_div"]:
+                total_calories += result / 100 * ingredient.piece_weight
 
         return total_calories
     
