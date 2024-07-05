@@ -1,5 +1,5 @@
 from django import forms
-from recipe.models import Category, Product, Recipe, RecipeIngridient
+from recipe.models import Category, Product, Recipe, RecipeIngridient, Diet
 from django.forms import inlineformset_factory
 
 
@@ -73,4 +73,17 @@ class ProductCreateForm(forms.ModelForm):
             "piece_weight": forms.NumberInput(attrs={"class": "form-select", "placeholder": "Piece weight", 'type': 'number', 'min': '0',})
         }
 
-        labels = {"name": "Name", "calories": "Calories (per 100 grams)", "piece_weight": 'Enter piece weight in grams'}
+        labels = {"name": "Name", "calories": "Calories (per 100 grams)", "piece_weight": 'Enter piece weight in grams (If product is countable)'}
+
+
+class DietCreateForm(forms.ModelForm):
+    class Meta:
+        model = Diet
+
+        fields = ["forriben_categories", "calloires_per_dish"]
+
+        widgets = {
+            "forriben_categories": forms.SelectMultiple(attrs={"class": "form-control"}),
+            "calloires_per_dish": forms.NumberInput(attrs={"class": "form-select", "min": 0})        }
+
+        labels = {"forriben_categories": "Choose categories that forriben for this diet", "calloires_per_dish": "Callories per dish (If diet needs low callories)"}
