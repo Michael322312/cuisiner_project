@@ -92,14 +92,14 @@ class CategoryCreateView(CreateView):
     model = Category
     template_name = "recipe/category/create_form.html"
     form_class = CategoryCreateForm
-    success_url = reverse_lazy("recipe:category_list")
+    success_url = reverse_lazy("recipe:create_category")
 
 
 @method_decorator(staff_member_required, name="dispatch")
 class CategoryUpdateView(UpdateView):
     model = Category
     template_name = "recipe/category/update_form.html"
-    success_url = reverse_lazy("recipe:create_category")
+    success_url = reverse_lazy("recipe:category_list")
     form_class = CategoryCreateForm
 
 
