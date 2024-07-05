@@ -80,10 +80,11 @@ class DietCreateForm(forms.ModelForm):
     class Meta:
         model = Diet
 
-        fields = ["forriben_categories", "calloires_per_dish"]
+        fields = ["name","forriben_categories", "calloires_per_dish"]
 
         widgets = {
+            "name": forms.TextInput(attrs={"class": "form-control"}),
             "forriben_categories": forms.SelectMultiple(attrs={"class": "form-control"}),
             "calloires_per_dish": forms.NumberInput(attrs={"class": "form-select", "min": 0})        }
 
-        labels = {"forriben_categories": "Choose categories that forriben for this diet", "calloires_per_dish": "Callories per dish (If diet needs low callories)"}
+        labels = {"forriben_categories": "Forriben categories (cmd button to select)", "calloires_per_dish": "Callories per dish (If diet needs low callories)"}
