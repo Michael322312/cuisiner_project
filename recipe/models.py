@@ -46,6 +46,9 @@ class Diet(models.Model):
     forriben_categories = models.ManyToManyField(Category)
     calloires_per_dish = models.IntegerField(default=0)
 
+    class Meta:
+        ordering = ["-id"]
+
 
 class RecipeIngridient(models.Model):
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
