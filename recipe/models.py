@@ -1,8 +1,8 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
-from user_system.models import CustomUser
 from django.db.models.signals import pre_delete
 from django.dispatch.dispatcher import receiver
+import core.settings
 
 UNIT_CHOISES = [("ML", "ml"), ("L", "l"), ("G", "g"), ("KG", "kg"), ("PIECES","pcs")]
 
@@ -42,6 +42,7 @@ class Product(models.Model):
 
 
 class Diet(models.Model):
+    name = models.CharField(max_length=23)
     forriben_categories = models.ManyToManyField(Category)
     calloires_per_dish = models.IntegerField(default=0)
 
@@ -61,7 +62,7 @@ class RecipeIngridient(models.Model):
 
 
 class Recipe(models.Model):
-    author = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="recipes")
+    author = models.ForeignKey(core.settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="recipes")
     title = models.CharField(max_length=63)
     main_image = models.ImageField(upload_to="recipe/", blank=True)
     url_yt_video = models.URLField(blank=True, null=True)

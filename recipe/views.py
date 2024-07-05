@@ -2,18 +2,17 @@ from django.shortcuts import render
 from django.views.generic import CreateView, DeleteView, UpdateView, ListView, DetailView
 from django.core.paginator import Paginator
 from django.template.defaulttags import register
-from recipe.models import Category, Product, RecipeIngridient, Recipe
+from recipe.models import Category, Product, Recipe, Diet
 from django.urls import reverse_lazy
 from django.contrib.admin.views.decorators import staff_member_required
 from django.utils.decorators import method_decorator
-from recipe.forms import CategoryCreateForm, ProductCreateForm, RecipeCreateForm, IngridientInlineFormSet
+from recipe.forms import CategoryCreateForm, ProductCreateForm, RecipeCreateForm, IngridientInlineFormSet, DietCreateForm
 from django.http import HttpResponseRedirect
 import re
 
 
 def embed_url(video_url):
     regex = r"(?:https:\/\/)?(?:www\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=)?(.+)"
-
     return re.sub(regex, r"https://www.youtube.com/embed/\1",video_url)
 
 
@@ -30,6 +29,7 @@ def create_recipe(request):
         formset = IngridientInlineFormSet(request.POST, request.FILES)
         if recipe_form.is_valid():
             created_recipe = recipe_form.save(commit=False)
+
             formset = IngridientInlineFormSet(
                 request.POST, request.FILES, instance=created_recipe
             )
@@ -138,3 +138,47 @@ class ProductUpdateView(UpdateView):
     template_name = "recipe/product/update_form.html"
     success_url = reverse_lazy("recipe:product_list")
     form_class = ProductCreateForm
+
+
+@method_decorator(staff_member_required, name="dispatch")
+class DietCreateView(CreateView):
+    model = Diet
+    template_name = "recipe/diet/create_form.html"
+    form_class = DietCreateForm
+    success_url = reverse_lazy("recipe:create_diet")
+
+
+@method_decorator(staff_member_required, name="dispatch")
+class DietListView(ListView):
+    model = Diet
+    context_object_name = "diets"
+    template_name = "recipe/diet/list_view.html"
+    paginate_by = 20
+
+    def get_queryset(self):
+        query = self.request.GET.get("search")
+        if query:
+            return Diet.objects.filter(name__icontains=query)
+        return Diet.objects.all()
+
+@method_decorator(staff_member_required, name="dispatch")
+class DietDetailView(ListView):
+    model = Diet
+    context_object_name = "diet"
+    template_name = "recipe/diet/list_view.html"
+
+
+@method_decorator(staff_member_required, name="dispatch")
+class DietDeleteView(DeleteView):
+    model = Diet
+    template_name = "recipe/diet/delete_confirm.html"
+    success_url = reverse_lazy("recipe:diet_list")
+
+
+@method_decorator(staff_member_required, name="dispatch")
+class DietUpdateView(UpdateView):
+    model = Diet
+    template_name = "recipe/diet/update_form.html"
+    success_url = reverse_lazy("recipe:diet_list")
+    form_class = DietCreateForm
+
