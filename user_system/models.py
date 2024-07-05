@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from recipe.models import Product, Category, Diet
+import core.settings
 
 class CustomUser(AbstractUser):
     avatar = models.ImageField(upload_to="user_system", blank=True, null=True)
@@ -8,12 +9,12 @@ class CustomUser(AbstractUser):
 
 
 class UserPreference(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete = models.CASCADE)
+    user = models.ForeignKey(core.settings.AUTH_USER_MODEL, on_delete = models.CASCADE)
 
-    likes_categories = models.ManyToManyField(Category, blank=True, null=True)
-    hates_categories = models.ManyToManyField(Category, blank=True, null=True)
+    fav_categories = models.ManyToManyField(Category, blank=True, related_name="fav_categories")
+    hate_categories = models.ManyToManyField(Category, blank=True, related_name="hate_categories")
 
-    likes_products = models.ManyToManyField(Product, blank=True, null=True)
-    hates_products = models.ManyToManyField(Product, blank=True, null=True)
+    fav_products = models.ManyToManyField(Product, blank=True, related_name="fav_products")
+    hates_products = models.ManyToManyField(Product, blank=True, related_name="hate_products")
 
-    diet = models.ManyToManyField(Diet, blank=True, null=True)
+    diet = models.ManyToManyField(Diet, blank=True)
