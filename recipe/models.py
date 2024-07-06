@@ -44,7 +44,7 @@ class Product(models.Model):
 class Diet(models.Model):
     name = models.CharField(max_length=23)
     forriben_categories = models.ManyToManyField(Category)
-    calloires_per_dish = models.IntegerField(default=0)
+    caloires_per_dish = models.IntegerField(default=0)
 
     class Meta:
         ordering = ["-id"]
