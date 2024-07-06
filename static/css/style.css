@@ -11,7 +11,7 @@ body {
     box-sizing: border-box;
     width: fit-content;
     font-size: small;
-    width: 100px;
+    width: 200px;
     
 }
 
@@ -20,7 +20,7 @@ body {
     justify-content: center; /* Centers the container on the page */
 }
 
-.container {
+.container_2 {
     width: 90%;
     display: flex;
     flex-flow: row wrap;

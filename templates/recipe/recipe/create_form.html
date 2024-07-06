@@ -27,10 +27,9 @@
     <form method="POST" enctype="multipart/form-data" class="mx-auto p-4 rec_form">
         {% csrf_token %}
         <p class="fs-2 fw-light">Create recipe</p>
-        <div class="mb-3">
+        <div class="mb-3 ">
             <label class="form-label" for="title">Recipe title</label>
             {{ recipe_form.title }}
-            <div id="" class="form-text">We'll never share your email with anyone else.</div>
         </div>
         <div class="mb-3">
             <label class="form-label" for="main_image">{{ recipe_form.main_image.label }}</label>
