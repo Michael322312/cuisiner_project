@@ -182,3 +182,9 @@ class DietUpdateView(UpdateView):
     success_url = reverse_lazy("recipe:diet_list")
     form_class = DietCreateForm
 
+
+@method_decorator(staff_member_required, name="dispatch")
+class DietDetailView(DetailView):
+    model = Diet
+    template_name = "recipe/diet/detail_view.html"
+    context_object_name = "diet"
