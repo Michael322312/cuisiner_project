@@ -1,32 +1,43 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-    <link rel="stylesheet" href="{% static 'css/styleы.css' %}"> 
-    <img src="/media/{{recipe.main_image}}" alt="{{ recipe.title }}" style="width: 200px;">
-    <br>
-    {{recipe.title}}
-    {{recipe.author}}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">  
+
+    <div class="container pt-2 recipe">
+        <div class="intro">
+            <h2>{{recipe.title}}</h2>
+            <div class="fs-6 fw-light">
+                {{recipe.author}}
+                {{recipe.upload_date}}
+            </div>
+            <hr>
+            {%if recipe.main_image%}
+                <img src="{{ recipe.main_image.url }}" alt="{{ recipe.title }}" >
+            {%else%}
+                <img src="{%static 'img/def_recipe.jpg'%}" alt="{{ recipe.title }}">
+            {%endif%}
+        </div>
+        
+        <div name="sec_info" class="row p-4">
+            <div class="col-6">
+                <h3>Introduction</h3>
+                {{recipe.introduction}}
+            </div>
+            <div class="col-6">
+                <h3>Details</h3>
+                Total {{recipe.total_calories}} calories
+                <br>
+                This recipe {% if recipe.is_dividible %} could {%else%} shouldn't {%endif%} be divided
+            </div>
+        </div>
+        
+    </div>
+
+
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     
-    {{recipe.upload_date}}
-    <br> 
-    {%if recipe.introduction%}
-        {{recipe.introduction}}
-    {%endif%}
-
-    Total calories{{recipe.total_calories}}
-    <br>
-
-    {%if recipe.url_yt_video %}
-        {{recipe.url_yt_video}}
-    {%endif%}
-
-    {%for ingridient in recipe.ingredients.all%}
-        {{ingridient}}
-        <br>
-    {%endfor%}
-
-    {%if recipe.recipe_text %}
-        {{recipe.recipe_text|linebreaks}}
-    {%endif%}
 
 {% endblock %}

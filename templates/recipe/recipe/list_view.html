@@ -1,31 +1,43 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">  
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">  
+    <style>
+        .card-title2 {
+            font-size: 1.25rem; /* Adjust as needed */
+        }
+        .card-img-top {
+            object-fit: cover;
+            height: 170px;
+            width: 100%;
+        }
+    </style>
 
-    <div class="page-container">
+    <div class="page-container pt-5">
     
-        <div class="container_2">
-            {% for recipe in recipes %}
-                <a href="{% url 'recipe:recipe' recipe.id %}" style="text-decoration: none;">
-                    <div class="card m-3" style="overflow: hidden;">
-                        {% if recipe.main_image %}
-                            <img src="/media/{{ recipe.main_image }}" class="card-img-top" alt="..." style="object-fit: cover; height: 170px; width: 100%;">
-                        {% else %}
-                            <img src="{% static 'img/def_recipe.jpg' %}" class="card-img-top" alt="..." style="object-fit: cover; height: 170px; width: 100%;">
-
-                        {%endif%}
-                        <div class="card-body">
-                            <div class="card-title2 fs-5">{{ recipe.title }}</div>
-                            <div style="font-size: small;">
-                                {{ recipe.author }}
-                                <br>
-                                {{ recipe.upload_date }}
+        <div class="container">
+            <div class="row">
+                {% for recipe in recipes %}
+                    <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+                        <a href="{% url 'recipe:recipe' recipe.id %}" style="text-decoration: none;">
+                            <div class="card" style="max-width: 400px; margin: auto;">
+                                {% if recipe.main_image %}
+                                    <img src="/media/{{ recipe.main_image }}" class="card-img-top" alt="{{ recipe.title }}">
+                                {% else %}
+                                    <img src="{% static 'img/def_recipe.jpg' %}" class="card-img-top" alt="Default Image">
+                                {% endif %}
+                                <div class="card-body">
+                                    <h5 class="card-title card-title2">{{ recipe.title }}</h5>
+                                    <p class="card-text" style="font-size: small;">
+                                        {{ recipe.author }}<br>
+                                        {{ recipe.upload_date }}
+                                    </p>
+                                </div>
                             </div>
-                        </div>
+                        </a>
                     </div>
-                </a>
-            {% endfor %}
+                {% endfor %}
+            </div>
         </div>
         {% if paginator.page_range|length > 1%}
             <nav aria-label="Page navigation example">

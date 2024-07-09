@@ -13,7 +13,7 @@ IngridientInlineFormSet = inlineformset_factory(
     ),
     extra=1,
     widgets={
-        'product': forms.Select(attrs={'class': ''}),
+        'product': forms.Select(attrs={'class': 'prod_select'}),
         'weight': forms.NumberInput(attrs={'class': 'form-control', 'type': 'number', 'min': '0', 'style': 'width:140%; min-width: 120px', 'placeholder': 'Weight'}),
         'weight_unit': forms.Select(attrs={'class': 'form-control', 'style': 'width: 50px'})
     },
