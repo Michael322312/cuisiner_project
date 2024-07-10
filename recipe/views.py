@@ -8,12 +8,6 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.utils.decorators import method_decorator
 from recipe.forms import CategoryCreateForm, ProductCreateForm, RecipeCreateForm, IngridientInlineFormSet, DietCreateForm
 from django.http import HttpResponseRedirect
-import re
-
-
-def embed_url(video_url):
-    regex = r"(?:https:\/\/)?(?:www\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=)?(.+)"
-    return re.sub(regex, r"https://www.youtube.com/embed/\1",video_url)
 
 
 def create_recipe(request):
@@ -35,13 +29,9 @@ def create_recipe(request):
             )
 
             if formset.is_valid():
-                if created_recipe.url_yt_video:
-                    created_recipe.url_yt_video = embed_url(created_recipe.url_yt_video)
                 created_recipe.author = request.user
                 created_recipe.save()
                 formset.save()
-                total_calories = created_recipe.calculate_total_calories()
-                created_recipe.total_calories = total_calories
                 created_recipe.save()
                 return HttpResponseRedirect(reverse_lazy('recipe:category_list'))
 
