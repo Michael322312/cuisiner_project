@@ -3,7 +3,7 @@
 {% block content %}
     <link rel="stylesheet" href="{% static 'css/style.css' %}">  
 
-    <div class="container pt-2 recipe">
+    <div class="container pt-4 recipe ps-3 pe-3">
         <div class="intro">
             <h2>{{recipe.title}}</h2>
             <div class="fs-6 fw-light">
@@ -18,19 +18,45 @@
             {%endif%}
         </div>
         
-        <div name="sec_info" class="row p-4">
-            <div class="col-6">
-                <h3>Introduction</h3>
-                {{recipe.introduction}}
-            </div>
-            <div class="col-6">
+        <div name="sec_info" class="row pt-5 ps-3 pe-3 pb-3 mx-auto">
+            {% if recipe.introduction %}
+                <div class="col-6 border p-3 bg-warning-subtle rounded me-2">
+                    <h3>Introduction</h3>
+                    {{recipe.introduction}}
+                </div>
+            {%endif%}
+            <div class="col-5 border p-3 bg-primary-subtle rounded">
                 <h3>Details</h3>
                 Total {{recipe.total_calories}} calories
                 <br>
                 This recipe {% if recipe.is_dividible %} could {%else%} shouldn't {%endif%} be divided
             </div>
         </div>
-        
+        {% if recipe.url_yt_video%}
+            <div class="ratio ratio-16x9">
+                <iframe 
+                src="{{recipe.url_yt_video}}" 
+                allowfullscreen
+                class="p-4">
+                </iframe>
+            </div>
+        {%endif%}
+        <div class="pt-5 ps-3 pe-3 pb-3">
+            <h3>Ingridients</h3>
+            <ul class="ps-3 pt-3 list-group list-group-flush">
+                {%for ingridient in recipe.ingredients.all%}
+                    <div class="list-group-item">{{ingridient}}</div>
+                {%endfor%}
+            </ul>
+        </div>
+
+        <div class="pt-5 ps-3 pe-3 pb-3">
+            <h3>Recipe</h3>
+            <div class="ps-4 lh-lg">
+                {{recipe.recipe_text|linebreaks}}
+            </div>
+        </div>
+
     </div>
 
 
