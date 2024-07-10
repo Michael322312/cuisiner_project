@@ -3,6 +3,12 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db.models.signals import pre_delete
 from django.dispatch.dispatcher import receiver
 import core.settings
+import re
+
+
+def embed_url(video_url):
+    regex = r"(?:https:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]+)"
+    return re.sub(regex, r"https://www.youtube.com/embed/\1",video_url)
 
 UNIT_CHOISES = [("ML", "ml"), ("L", "l"), ("G", "g"), ("KG", "kg"), ("PIECES","pcs")]
 
@@ -36,6 +42,7 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+    
 
     class Meta:
         ordering = ["-id"]
@@ -51,7 +58,7 @@ class Diet(models.Model):
 
 
 class RecipeIngridient(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, related_name="recipe_ingridients")
     weight = models.FloatField(
         validators=[MinValueValidator(0), MaxValueValidator(999999)]
     )
@@ -97,6 +104,15 @@ class Recipe(models.Model):
                 total_calories += result / 100 * ingredient.piece_weight
 
         return total_calories
+    
+    def save(self, *args, **kwargs):
+        if self.url_yt_video:
+            self.url_yt_video = embed_url(self.url_yt_video)
+        
+        total_calories = self.calculate_total_calories()
+        self.total_calories = total_calories
+        
+        super(Recipe, self).save(*args, **kwargs)
     
     class Meta:
         ordering = ['-id']
