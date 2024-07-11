@@ -17,7 +17,6 @@ from recipe.views import (
     DietListView,
     DietDetailView
 )
-from django.urls import reverse_lazy
 
 urlpatterns = [
     path("category_list/", CategoryListView.as_view(), name="category_list"),
@@ -34,7 +33,7 @@ urlpatterns = [
     path("diet_list/<int:pk>", DietDetailView.as_view(), name="diet_detail"),
     path("diet_list/", DietListView.as_view(), name="diet_list"),
     path("create_recipe/", create_recipe, name="create_recipe"),
-    path("recipes/", RecipeListView.as_view(), name= 'recipe_list'),
+    path("recipes/", RecipeListView.as_view(), name='recipe_list'),
     path("recipes/<int:pk>", RecipeDetailView.as_view(), name='recipe'),
 ]
 
