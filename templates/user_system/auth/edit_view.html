@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <nav aria-label="breadcrumb" class="m-3 mb-5">
+        <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{%url 'user_system:settings' %}">Settings</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Edit profile</li>
+        </ol>
+    </nav>
+    <div class="d-flex align-items-center" style="padding: 1rem;">
+        <form method="post" enctype="multipart/form-data" class="w-75 mx-auto" style="max-width: 800px;">
+            {%csrf_token%}
+            <h3>Edit profile</h3>
+            <br>
+            {{form.username.label}}
+            {{form.username}}
+            {{form.email.label}}
+            {{form.email}}
+            {{form.avatar.label}}
+            {{form.avatar}}
+            {{form.intro.label}}
+            {{form.intro}}
+            <button type="submit" class="btn btn-primary">Edit</button>
+        </form>
+    </div>
+{% endblock %}

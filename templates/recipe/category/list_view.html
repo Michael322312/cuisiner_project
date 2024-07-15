@@ -20,7 +20,7 @@
             </div>
         </div>
         <form class="d-flex mt-3 ms-2" role="search" style="max-width: 500px; min-width: 250px;">
-            <input class="form-control me-2" type="search" placeholder="Search categories" aria-label="Search" name="search">
+            <input class="form-control me-2" type="search" placeholder="Search categories" aria-label="Search" name="search" value="{{search_text}}">
             <button class="btn btn-outline-success" type="submit">Search</button>
         </form>
         
@@ -57,7 +57,9 @@
                                         <div class="offcanvas-body">
                                             <ul class="list-group">
                                                 {%for product in category.products.all%}
-                                                    <li class="list-group-item">{{product}}</li>
+                                                    <li class="list-group-item">
+                                                        {{product}}
+                                                    </li>
                                                 {%endfor%}
                                             </ul>
                                         </div>

@@ -8,8 +8,11 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.utils.decorators import method_decorator
 from recipe.forms import CategoryCreateForm, ProductCreateForm, RecipeCreateForm, IngridientInlineFormSet, DietCreateForm
 from django.http import HttpResponseRedirect
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 
 
+@login_required(login_url="log_in/")
 def create_recipe(request):
     recipe = Recipe()
 
@@ -68,6 +71,12 @@ class CategoryListView(ListView):
         if query:
             return Category.objects.filter(name__icontains=query)
         return Category.objects.all()
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        search_text = self.request.GET.get('search')
+        context["search_text"] = self.request.GET.get('search') if search_text else ''
+        return context
 
 
 @method_decorator(staff_member_required, name="dispatch")
@@ -114,6 +123,12 @@ class ProductListView(ListView):
             return Product.objects.filter(name__icontains=query)
         return Product.objects.all()
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        search_text = self.request.GET.get('search')
+        context["search_text"] = self.request.GET.get('search') if search_text else ''
+        return context
+
 
 @method_decorator(staff_member_required, name="dispatch")
 class ProductDeleteView(DeleteView):
@@ -150,6 +165,13 @@ class DietListView(ListView):
         if query:
             return Diet.objects.filter(name__icontains=query)
         return Diet.objects.all()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        search_text = self.request.GET.get('search')
+        context["search_text"] = self.request.GET.get('search') if search_text else ''
+        return context
+
 
 @method_decorator(staff_member_required, name="dispatch")
 class DietDetailView(ListView):
