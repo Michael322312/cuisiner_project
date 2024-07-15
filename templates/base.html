@@ -101,7 +101,24 @@
             </div>
         </div>
     </nav>
-    
+    {% block breadcrump %}
+    {% endblock %}
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    {% for field, errors in form.errors.items %}
+        <ul class="messages">
+        {% for error in errors %}
+            <div class="alert alert-danger w-50 mt-2 ms-1" role="alert">
+                {{error}}
+            </div>
+        {% endfor %}
+        </ul>
+    {% endfor %}
     {% block content %}
     {% endblock %}
 
