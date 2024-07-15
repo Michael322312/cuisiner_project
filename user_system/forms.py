@@ -1,6 +1,6 @@
 from django import forms
 from user_system.models import CustomUser, UserPreference
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth import password_validation
 
 
@@ -19,9 +19,22 @@ class CustomUserCreationForm(UserCreationForm):
     )
     class Meta(UserCreationForm.Meta):
         model = CustomUser
-        fields = UserCreationForm.Meta.fields + ("avatar", "intro", )
+        fields = UserCreationForm.Meta.fields + ("email", "avatar", "intro", )
         widgets = {
             "username": forms.TextInput(attrs={"class": "form-control mb-3 w-75 rounded", "placeholder": "Username"}),
+            "avatar": forms.FileInput(attrs={"class": "form-control mb-3 w-75 rounded"}),
+            "intro": forms.Textarea(attrs={"class": "form-control mb-3 w-75 rounded", "placeholder": "Bio", 'rows': "4;"}),
+            "email": forms.EmailInput(attrs={"class": "form-control mb-3 w-75 rounded", "placeholder": "Email"}),
+        }
+
+
+class CustomUserUpdateForm(UserChangeForm):
+    class Meta:
+        model = CustomUser
+        fields = ["username", "email",'avatar', 'intro']
+        widgets = {
+            "username": forms.TextInput(attrs={"class": "form-control mb-3 w-75 rounded", "placeholder": "Username"}),
+            "email": forms.EmailInput(attrs={"class": "form-control mb-3 w-75 rounded", "placeholder": "Email"}),
             "avatar": forms.FileInput(attrs={"class": "form-control mb-3 w-75 rounded"}),
             "intro": forms.Textarea(attrs={"class": "form-control mb-3 w-75 rounded", "placeholder": "Bio", 'rows': "4;"}),
         }

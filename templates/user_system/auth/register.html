@@ -90,7 +90,7 @@
     </head>
     <body class="d-flex align-items-center py-4 bg-body-tertiary">
         <main class="form-signin mx-auto my-auto  w-100 rounded" style="max-width: 600;">
-          <form method="post" class="mx-auto">
+          <form method="post" class="mx-auto" enctype="multipart/form-data">
                 {%csrf_token%}
                 
                 <img class="mb-4" src="{% static 'img/icons/cooking.svg' %}" alt="" width="72" height="57">
@@ -101,6 +101,7 @@
                     </div>
                 {% endif %}
                 {{form.username}}
+                {{form.email}}
                 {{form.avatar.label}}
                 {{form.avatar}}
                 {{form.intro}}
