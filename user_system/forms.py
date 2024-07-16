@@ -38,3 +38,25 @@ class CustomUserUpdateForm(UserChangeForm):
             "avatar": forms.FileInput(attrs={"class": "form-control mb-3 w-75 rounded"}),
             "intro": forms.Textarea(attrs={"class": "form-control mb-3 w-75 rounded", "placeholder": "Bio", 'rows': "4;"}),
         }
+
+
+class UserPreferenceCreateForm(forms.ModelForm):
+    class Meta:
+        model = UserPreference
+        fields = ["fav_categories", "hate_categories", "fav_products", "hates_products", "diet"]
+        widgets = {
+            "fav_categories": forms.SelectMultiple(attrs={"class": "chosen-select w-25"}),
+            "hate_categories": forms.SelectMultiple(attrs={"class": "chosen-select w-25"}),
+            "fav_products": forms.SelectMultiple(attrs={"class": "chosen-select w-25"}),
+            "hates_products": forms.SelectMultiple(attrs={"class": "chosen-select w-25"}),
+            "diet": forms.SelectMultiple(attrs={"class": "chosen-select w-25"}),
+            
+        }
+        labels = {
+            "fav_categories": "Favorite categories",
+            "hate_categories": "Hated categories",
+            "fav_products": "Favorite products",
+            "hates_products": "Hated products",
+            "diet": "Diets",
+            
+        }
