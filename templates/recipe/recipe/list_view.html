@@ -14,39 +14,42 @@
     </style>
 
     <div class="page-container pt-5">
-    
-        <div class="container">
-            <div class="row">
-                {% for recipe in recipes %}
-                    <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
-                        <a href="{% url 'recipe:recipe' recipe.id %}" style="text-decoration: none;">
-                            <div class="card" style="max-width: 400px; margin: auto;">
-                                {% if recipe.main_image %}
-                                    <img src="/media/{{ recipe.main_image }}" class="card-img-top" alt="{{ recipe.title }}">
-                                {% else %}
-                                    <img src="{% static 'img/def_recipe.jpg' %}" class="card-img-top" alt="Default Image">
-                                {% endif %}
-                                <div class="card-body">
-                                    <h5 class="card-title card-title2">{{ recipe.title }}</h5>
-                                    <p class="card-text" style="font-size: small;">
-                                        {{ recipe.author }}<br>
-                                        {{ recipe.upload_date }}
-                                    </p>
+        {%if recipes%}
+            <div class="container">
+                <div class="row">
+                    {% for recipe in recipes %}
+                        <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+                            <a href="{% url 'recipe:recipe' recipe.id %}" style="text-decoration: none;">
+                                <div class="card" style="max-width: 400px; margin: auto;">
+                                    {% if recipe.main_image %}
+                                        <img src="/media/{{ recipe.main_image }}" class="card-img-top" alt="{{ recipe.title }}">
+                                    {% else %}
+                                        <img src="{% static 'img/def_recipe.jpg' %}" class="card-img-top" alt="Default Image">
+                                    {% endif %}
+                                    <div class="card-body">
+                                        <h5 class="card-title card-title2">{{ recipe.title }}</h5>
+                                        <p class="card-text" style="font-size: small;">
+                                            {{ recipe.author }}<br>
+                                            {{ recipe.upload_date }}
+                                        </p>
+                                    </div>
                                 </div>
-                            </div>
-                        </a>
-                    </div>
-                {% endfor %}
-            </div>
-        </div>
-        {% if paginator.page_range|length > 1%}
-            <nav aria-label="Page navigation example">
-                <ul class="pagination ms-5 mt-3">
-                    {% for page_num in paginator.page_range %}
-                        <li class="page-item"><a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a></li>
+                            </a>
+                        </div>
                     {% endfor %}
-                </ul>
-            </nav> 
+                </div>
+            </div>
+            {% if paginator.page_range|length > 1%}
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination ms-5 mt-3">
+                        {% for page_num in paginator.page_range %}
+                            <li class="page-item"><a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </nav> 
+            {%endif%}
+        {%else%}
+                <h3>There is no recipes found</h3>
         {%endif%}
     </div>
 {% endblock %}
