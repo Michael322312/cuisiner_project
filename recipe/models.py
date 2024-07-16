@@ -53,6 +53,9 @@ class Diet(models.Model):
     forriben_categories = models.ManyToManyField(Category)
     caloires_per_dish = models.IntegerField(default=0)
 
+    def __str__(self):
+        return self.name
+
     class Meta:
         ordering = ["-id"]
 
