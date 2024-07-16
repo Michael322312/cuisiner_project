@@ -1,14 +1,20 @@
 from django.db.models.base import Model as Model
 from django.db.models.query import QuerySet
+from django.forms import BaseModelForm
 from django.shortcuts import render
-from user_system.forms import CustomUserCreationForm, CustomUserUpdateForm
+from user_system.forms import CustomUserCreationForm, CustomUserUpdateForm, UserPreferenceCreateForm
 from django.views.generic import CreateView, DeleteView, UpdateView, ListView, DetailView, TemplateView
-from user_system.models import CustomUser
+from user_system.models import CustomUser, UserPreference
 from django.urls import reverse_lazy
 from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from user_system.mixins import RequestUserIsUserMixin
 from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib import messages
+from django.http.response import HttpResponseRedirect, HttpResponse
+from django.views.generic.detail import SingleObjectTemplateResponseMixin
+from django.views.generic.edit import ModelFormMixin, ProcessFormView
+from django.shortcuts import redirect
 
 
 template_root = "user_system/"
@@ -18,7 +24,7 @@ class UserCreateView(CreateView):
     model = CustomUser
     template_name = template_root + "auth/register.html"
     form_class = CustomUserCreationForm
-    success_url = reverse_lazy("recipe:recipe_list")
+    success_url = reverse_lazy("user_system:log_in")
 
 
 class UserUpdateView(LoginRequiredMixin, RequestUserIsUserMixin, UpdateView):
@@ -40,8 +46,28 @@ class ChangePasswordView(PasswordChangeView):
 
     
 class CustomLoginView(LoginView):
-    template_name = template_root+"auth/log_in.html"
+    template_name = template_root + "auth/log_in.html"
 
+    
+class DeleteUserView(LoginRequiredMixin, RequestUserIsUserMixin, DeleteView):
+    model = CustomUser
+    template_name = template_root + "auth/delete_user.html"
+    success_url = reverse_lazy("recipe:recipe_list")
+
+    def post(self, request, *args, **kwargs):
+        user = self.request.user
+        if user.check_password(self.request.POST.get('password')):
+            get_user = CustomUser.objects.get(pk=user.pk)
+            if get_user:
+                get_user.delete()
+                messages.success(self.request, "User succesfully deleted")
+                return HttpResponseRedirect(self.success_url)
+            else:
+                messages.error(self.request, "User not found")
+        else:
+            messages.error(self.request, "Password didn't match")
+        return render(request, self.template_name)
+        
 
 class CustomLogoutView(LogoutView, LoginRequiredMixin):
     next_page = "user_system:log_in"
@@ -49,5 +75,42 @@ class CustomLogoutView(LogoutView, LoginRequiredMixin):
 
 class UserSettingsView(TemplateView, LoginRequiredMixin):
     template_name = template_root+"auth/settings.html"
+
+
+class UserPreferenceCreateView(LoginRequiredMixin, CreateView):
+    model = UserPreference
+    template_name = template_root + "pref/create_view.html"
+    form_class = UserPreferenceCreateForm
+    success_url = reverse_lazy("recipe:recipe_list")
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        form.save()
+        return super().form_valid(form)
+    
+    def get(self, *args, **kwargs):
+        if self.model.objects.filter(user=self.request.user).exists():
+            return redirect("user_system:edit_pref", pk=self.model.objects.filter(user=self.request.user).first().pk)
+        else:
+            return super().get(*args, **kwargs)
+
+
+
+class UserPreferenceUpdateView(LoginRequiredMixin, UpdateView):
+    model = UserPreference
+    template_name = template_root + "pref/create_view.html"
+    form_class = UserPreferenceCreateForm
+    success_url = reverse_lazy("recipe:recipe_list")
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        form.save()
+        return super().form_valid(form)
+    
+    def get(self, *args, **kwargs):
+        if self.model.objects.filter(user=self.request.user).exists():
+            return super().get(*args, **kwargs)
+        else:
+            return redirect("user_system:create_pref")
 
 
