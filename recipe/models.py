@@ -111,10 +111,11 @@ class Recipe(models.Model):
     def save(self, *args, **kwargs):
         if self.url_yt_video:
             self.url_yt_video = embed_url(self.url_yt_video)
-        
+        super(Recipe, self).save(*args, **kwargs)
+
         total_calories = self.calculate_total_calories()
         self.total_calories = total_calories
-        
+
         super(Recipe, self).save(*args, **kwargs)
     
     class Meta:
