@@ -53,6 +53,25 @@ body {
     max-width: 100%;
 }
 
+.card-title2 {
+    font-size: 1.25rem; /* Adjust as needed */
+}
+.card-img-top {
+    object-fit: cover;
+    height: 170px;
+    width: 100%;
+}
+.filter_pref {
+    width: 30%;
+    min-width: 120px;
+    max-width: 200px;
+}
+
+.filter_form {
+    display: inline-flex;
+    
+}
+
 
 .item2 {
     flex: 1 1 100px;
@@ -67,6 +86,7 @@ body {
     max-width: 250px;
 }
 
+
 @media (max-width: 500px) {
     .item {
       flex: 1 1 100%;
@@ -79,4 +99,7 @@ body {
         justify-content: center;
     }
 
+    .filter_form{
+        margin: auto;
+    }
 }
