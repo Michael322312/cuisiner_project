@@ -1,3 +1,4 @@
+from django.db.models.query import QuerySet
 from django.shortcuts import render
 from django.views.generic import CreateView, DeleteView, UpdateView, ListView, DetailView
 from django.core.paginator import Paginator
@@ -10,6 +11,10 @@ from recipe.forms import CategoryCreateForm, ProductCreateForm, RecipeCreateForm
 from django.http import HttpResponseRedirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from user_system.models import UserPreference
+from django.db.models import Q
+
 
 
 @login_required(login_url="log_in/")
@@ -31,6 +36,15 @@ def create_recipe(request):
                 request.POST, request.FILES, instance=created_recipe
             )
 
+            for ing in formset.cleaned_data:
+                
+                if not ing['product'].piece_weight:
+                    messages.error(request, "Ingridient can't be pieced")
+                    context = {"recipe_form": recipe_form, "formset": formset}
+                    return render(
+                        template_name="recipe/recipe/create_form.html", context=context, request=request
+                    )
+
             if formset.is_valid():
                 created_recipe.author = request.user
                 created_recipe.save()
@@ -45,12 +59,44 @@ def create_recipe(request):
     )
 
 
-
 class RecipeListView(ListView):
     model = Recipe
     template_name = "recipe/recipe/list_view.html"
     context_object_name = "recipes"
     paginate_by = 20
+
+    def get_queryset(self):
+        for_user = self.request.GET.get("user_filter")
+        order = self.request.GET.get("order")
+        user = self.request.user
+        if not user.is_anonymous:
+            if for_user:
+                user_pref = UserPreference.objects.get(user=user)
+                recipes_for_user = Recipe.objects
+
+                if for_user in ["hated", "all"]:
+                    recipes_for_user = recipes_for_user.exclude(
+                        Q(ingredients__product__category__in=user_pref.hate_categories.all())|
+                        Q(ingredients__product__in=user_pref.hates_products.all())
+                    )
+                if for_user in ["favorite", "all"]:
+                    recipes_for_user = recipes_for_user.filter(
+                        Q(ingredients__product__category__in=user_pref.fav_categories.all()) |
+                        Q(ingredients__product__in=user_pref.fav_products.all())
+                    )
+
+                recipes_for_user = recipes_for_user.distinct()
+                query = recipes_for_user
+        else:
+            query = Recipe.objects.all()
+        if order and order != "revelant":
+            orders = {
+                "new": "-upload_date",
+                "old": "upload_date"
+            }
+            query = query.order_by(orders[order])
+        
+        return query
 
 
 class RecipeDetailView(DetailView):

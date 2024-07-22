@@ -12,7 +12,23 @@
             width: 100%;
         }
     </style>
-
+        <form class="d-flex mt-3 ms-2" style="max-width: 500px; min-width: 250px;">
+            {%if request.user.is_authenticated%}
+                <select name="user_filter" id="user_filter" class="form-control m-1" style="width: 25%;">
+                    <option disabled selected value class="text-secondary fw-lighter">Preferences</option>
+                    <option value="all">With all filters</option>
+                    <option value="hated">Remove hated</option>
+                    <option value="favorite">Show favorite</option>
+                </select>
+            {%endif%}
+            <select name="order" id="order" class="form-control m-1" style="width: 20%;">
+                <option value="revelant" default>Revelant</option>
+                <option value="new">Newest</option>
+                <option value="old">Oldest</option>
+            </select>
+            <button class="btn btn-outline-primary m-1" type="submit">Filter</button>
+        </form>
+    
     <div class="page-container pt-5">
         {%if recipes%}
             <div class="container">
