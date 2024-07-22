@@ -68,7 +68,9 @@ class RecipeListView(ListView):
     def get_queryset(self):
         for_user = self.request.GET.get("user_filter")
         order = self.request.GET.get("order")
+        search = self.request.GET.get("search")
         user = self.request.user
+        query = Recipe.objects.all()
         if not user.is_anonymous:
             if for_user:
                 user_pref = UserPreference.objects.get(user=user)
@@ -84,11 +86,14 @@ class RecipeListView(ListView):
                         Q(ingredients__product__category__in=user_pref.fav_categories.all()) |
                         Q(ingredients__product__in=user_pref.fav_products.all())
                     )
-
-                recipes_for_user = recipes_for_user.distinct()
                 query = recipes_for_user
-        else:
-            query = Recipe.objects.all()
+        
+        if search:
+            query = query.filter(
+                Q(title__icontains=search) |
+                Q(ingredients__product__name__icontains=search)
+            )
+        
         if order and order != "revelant":
             orders = {
                 "new": "-upload_date",
@@ -96,7 +101,16 @@ class RecipeListView(ListView):
             }
             query = query.order_by(orders[order])
         
-        return query
+        
+        return query.distinct()
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        order_text = self.request.GET.get('order')
+        search_text = self.request.GET.get('search')
+        context["order_text"] = order_text if order_text else ''
+        context["search_text"] = search_text if search_text else ''
+        return context
 
 
 class RecipeDetailView(DetailView):
@@ -121,7 +135,7 @@ class CategoryListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         search_text = self.request.GET.get('search')
-        context["search_text"] = self.request.GET.get('search') if search_text else ''
+        context["search_text"] = search_text if search_text else ''
         return context
 
 
