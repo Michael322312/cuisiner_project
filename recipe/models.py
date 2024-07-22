@@ -92,7 +92,7 @@ class Recipe(models.Model):
         unit_type = {
             "small": ["ML", "G"],
             "big": ["L", "KG"],
-            "un_div": ["Pieces"]
+            "un_div": ["PIECES"]
         }
         total_calories = 0
 
@@ -104,7 +104,7 @@ class Recipe(models.Model):
             elif ingredient.weight_unit in unit_type["big"]:
                 total_calories += result * 10
             elif ingredient.weight_unit in unit_type["un_div"]:
-                total_calories += result / 100 * ingredient.piece_weight
+                total_calories += result / 100 * ingredient.product.piece_weight
 
         return total_calories
     
