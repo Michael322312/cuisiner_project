@@ -21,12 +21,21 @@
 
 
         <div style="display: inline-flexbox; ">
-            <form class="filter_form mt-3 ms-3 container" role="search" style="max-width: 350px; min-width: 200px;">
+            {%if request.user.is_authenticated%}
+                {%if request.user == user%}
+                    <a class="btn btn-outline-warning ms-3 mb-1" href="{% url 'recipe:create_recipe' %}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-plus-circle-fill mb-1" viewBox="0 0 16 16">
+                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z"/>
+                        </svg>
+                    </a>
+                {%endif%}
+            {%endif%}
+            <form class="filter_form mt-3 container" role="search" style="max-width: 350px; min-width: 200px;">
                 <input class="form-control me-2" type="search" placeholder="Search recipes" aria-label="Search" name="search" value="{{search_text}}">
                 <button class="btn btn-outline-success" type="submit">Search</button>
             </form>
             <div class="dropdown filter_form">
-                <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+                <button type="button" class="btn btn-primary dropdown" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
                     Filter
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-filter-circle" viewBox="0 0 16 16">
                         <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
