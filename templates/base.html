@@ -33,9 +33,11 @@
                     <li class="nav-item">
                       <a class="nav-link" href="{% url 'recipe:recipe_list' %}">Recipes</a>
                     </li>
-                    <li class="nav-item pe-2">
-                        <a class="nav-link" href="{% url 'recipe:recipe_list' %}">My recipes</a>
-                    </li>
+                    {% if request.user.is_authenticated %}
+                        <li class="nav-item pe-2">
+                            <a class="nav-link" href="{% url 'recipe:user_recipes' %}">My recipes</a>
+                        </li>
+                    {%endif%}
 
                     </ul>
                     {% if request.user.is_authenticated %}
@@ -52,7 +54,7 @@
                                 {{request.user.username}}
                             </button>
                             <ul class="dropdown-menu w-25">
-                                <li><a class="dropdown-item text-primary" href="#">
+                                <li><a class="dropdown-item text-primary" href="{% url 'recipe:user_recipes'%}">
                                     Profile
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-person-bounding-box pb-1 " viewBox="0 0 16 16">
                                         <path d="M1.5 1a.5.5 0 0 0-.5.5v3a.5.5 0 0 1-1 0v-3A1.5 1.5 0 0 1 1.5 0h3a.5.5 0 0 1 0 1zM11 .5a.5.5 0 0 1 .5-.5h3A1.5 1.5 0 0 1 16 1.5v3a.5.5 0 0 1-1 0v-3a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 1-.5-.5M.5 11a.5.5 0 0 1 .5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 1 0 1h-3A1.5 1.5 0 0 1 0 14.5v-3a.5.5 0 0 1 .5-.5m15 0a.5.5 0 0 1 .5.5v3a1.5 1.5 0 0 1-1.5 1.5h-3a.5.5 0 0 1 0-1h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 1 .5-.5"/>
