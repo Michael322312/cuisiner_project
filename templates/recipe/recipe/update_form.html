@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <style>
+        .rec_form {
+            min-width: 350px;
+            width: 70%;
+            margin-top: 5%;
+            background-color: white;
+            transition: 2s;
+            border-radius: 5px;
+        }
+
+        @media (max-width: 600px) {
+            .rec_form {
+                width: 100%;
+                margin-top: 0;
+                background-color: rgb(222, 231, 255);
+                border-radius: 0px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="{% static 'css/recipe_styles.css' %}">  
+
+    <form method="POST" enctype="multipart/form-data" class="mx-auto p-4 rec_form">
+        {% csrf_token %}
+        <p class="fs-2 fw-light">Update recipe</p>
+        <div class="mb-3 ">
+            <label class="form-label" for="title">Recipe title</label>
+            {{ form.title }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="main_image">{{ form.main_image.label }}</label>
+            {{ form.main_image }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="url_yt_video">Link for YouTube video</label>
+            {{ form.url_yt_video }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="introduction">Recipe introduction</label>
+            {{ form.introduction }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="ingridients">Ingridients</label>
+            <div name="ingredients" class="border rounded p-2">
+                {%for ingridient in recipe.ingredients.all%}
+                    {{ingridient}}
+                    <br>
+                {%endfor%}
+            </div>
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="recipe_text">Recipe text</label>
+            {{ form.recipe_text }}
+        </div>
+        <button type="submit" class="btn btn-primary">Update</button>
+    </form>
+    <div class="p-4"></div>
+
+{% endblock %}

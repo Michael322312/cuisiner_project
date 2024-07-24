@@ -71,7 +71,7 @@ class RecipeIngridient(models.Model):
     )
 
     def __str__(self):
-        return f"{self.product} {self.weight} {self.weight_unit}"
+        return f"{self.product} {self.weight} {self.get_weight_unit_display()}"
     
     class Meta:
         ordering = ["-id"]

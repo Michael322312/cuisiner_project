@@ -14,6 +14,7 @@ from django.contrib import messages
 from user_system.models import UserPreference
 from django.db.models import Q
 from user_system.models import CustomUser
+from recipe.mixins import UserIsOwnerMixin
 
 
 
@@ -185,6 +186,19 @@ class RecipeDetailView(DetailView):
     model = Recipe
     template_name = "recipe/recipe/detail_view.html"
     context_object_name = "recipe"
+
+
+class RecipeUpdateView(LoginRequiredMixin, UserIsOwnerMixin, UpdateView):
+    model = Recipe
+    template_name = "recipe/recipe/update_form.html"
+    success_url = reverse_lazy("recipe:recipe_list")
+    form_class = RecipeCreateForm
+
+
+class RecipeDeleteView(LoginRequiredMixin,UserIsOwnerMixin, DeleteView):
+    model = Recipe
+    template_name = "recipe/recipe/delete_confirm.html"
+    success_url = reverse_lazy("recipe:recipe_list")
 
 
 @method_decorator(staff_member_required, name="dispatch")
