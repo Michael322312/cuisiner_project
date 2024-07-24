@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <style>
+        .rec_form {
+            min-width: 350px;
+            width: 70%;
+            margin-top: 5%;
+            background-color: white;
+            transition: 2s;
+            border-radius: 5px;
+        }
+
+        @media (max-width: 600px) {
+            .rec_form {
+                width: 100%;
+                margin-top: 0;
+                background-color: rgb(222, 231, 255);
+                border-radius: 0px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="{% static 'css/recipe_styles.css' %}">  
+
+    <form method="POST" enctype="multipart/form-data" class="mx-auto p-4 rec_form">
+        {% csrf_token %}
+        <p class="fs-2 fw-light">Create recipe</p>
+        <div class="mb-3 ">
+            <label class="form-label" for="title">Recipe title</label>
+            {{ recipe_form.title }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="main_image">{{ recipe_form.main_image.label }}</label>
+            {{ recipe_form.main_image }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="url_yt_video">Link for YouTube video</label>
+            {{ recipe_form.url_yt_video }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="introduction">Recipe introduction</label>
+            {{ recipe_form.introduction }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="ingredients">Recipe ingredients</label>
+            <button id="add-ingredient" type="button" class="btn btn-secondary mb-2">Add ingredient</button>
+            <div id="ingredients-formset" class="ing_list">
+                {% for form in formset %}
+                    <div class="ing-form">
+                        {{ form.product }}
+                        {{ form.weight }}
+                        {{ form.weight_unit }}
+                    </div>
+                {% endfor %}
+            </div>
+            {{ formset.management_form }}
+        </div>
+        
+        <div class="mb-3">
+            <label class="form-label" for="recipe_text">Recipe text</label>
+            {{ recipe_form.recipe_text }}
+        </div>
+        <button type="submit" class="btn btn-primary">Create</button>
+    </form>
+    <div id="empty-form" style="display: none;">
+        <div class="ing-form">
+            {{ formset.empty_form.as_p }}
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $('#add-ingredient').click(function() {
+                var formCount = $('#ingredients-formset .ing-form').length;
+                var emptyFormHtml = $('#empty-form .ing-form').html().replace(/__prefix__/g, formCount);
+                var newForm = $('<div class="ing-form">' + emptyFormHtml + '</div>');
+                $('#ingredients-formset').append(newForm);
+
+                // Update the total forms count
+                var totalForms = $('#id_ingredients-TOTAL_FORMS');
+                totalForms.val(parseInt(totalForms.val()) + 1);
+            });
+            $(".prod_select").select2();
+        });
+    </script>
+{% endblock %}

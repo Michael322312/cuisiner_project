@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <div name="user_profile" class="py-5 text-center container">
+        {%if user.avatar %}
+            <img src="/media/{{user.avatar}}" class="rounded-circle" width="150" height="150" style="object-fit: cover;">
+        {%else%}
+            <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
+                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+                <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
+            </svg>
+        {%endif%}
+        <br>
+        <h3 class="p-1 mt-1">{{user.username}}</h3>
+        <div class="fw-light text-secondary mb-3" style="font-size: smaller;">From {{user.date_joined.date}}</div>
+
+        <div class="p-1 pt-0 pb-4">
+            {{user.intro}}
+        </div>
+
+
+
+        <div style="display: inline-flexbox; ">
+            <form class="filter_form mt-3 ms-3 container" role="search" style="max-width: 350px; min-width: 200px;">
+                <input class="form-control me-2" type="search" placeholder="Search recipes" aria-label="Search" name="search" value="{{search_text}}">
+                <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+            <div class="dropdown filter_form">
+                <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+                    Filter
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-filter-circle" viewBox="0 0 16 16">
+                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                        <path d="M7 11.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5m-2-3a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m-2-3a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5"/>
+                      </svg>
+                </button>
+                <form class=" dropdown-menu p-2">
+                    {%if request.user.is_authenticated%}
+                        <select name="user_filter" id="user_filter" class="form-control filter_pref m-1 text-secondary">
+                            <option disabled selected value class="text-secondary fw-lighter">Preferences</option>
+                            <option value="all">All preferences</option>
+                            <option value="hated">Remove hated</option>
+                            <option value="favorite">Show favorite</option>
+                        </select>
+                    {%endif%}
+                    <select name="order" id="order" class="form-control m-1 filter_pref text-secondary">
+                        <option value="revelant" {%if order_text ==  "revelant"%} selected {%endif%}>Revelant</option>
+                        <option value="new" {%if order_text ==  "new"%} selected {%endif%}>Newest</option>
+                        <option value="old" {%if order_text ==  "old"%} selected {%endif%}>Oldest</option>
+                    </select>
+                    <button class="btn btn-outline-primary m-1" type="submit">
+                        Filter
+                    </button>
+                    
+                </form>
+            </div>
+        </div>
+    </div>
+    
+
+    <div class="page-container">
+        {%if recipes%}
+            <div class="container ">
+                <div class="row mx-auto">
+                    {% for recipe in recipes %}
+                        <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+                            <a href="{% url 'recipe:recipe' recipe.id %}" style="text-decoration: none;">
+                                <div class="card" style="max-width: 400px; margin: auto;">
+                                    {% if recipe.main_image %}
+                                        <img src="/media/{{ recipe.main_image }}" class="card-img-top" alt="{{ recipe.title }}">
+                                    {% else %}
+                                        <img src="{% static 'img/def_recipe.jpg' %}" class="card-img-top" alt="Default Image">
+                                    {% endif %}
+                                    <div class="card-body">
+                                        <h5 class="card-title card-title2">{{ recipe.title }}</h5>
+                                        <p class="card-text" style="font-size: small;">
+                                            {{ recipe.author }}<br>
+                                            {{ recipe.upload_date }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% if paginator.page_range|length > 1%}
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination ms-5 mt-3">
+                        {% for page_num in paginator.page_range %}
+                            <li class="page-item"><a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </nav> 
+            {%endif%}
+        {%else%}
+                <h3>There is no recipes found</h3>
+        {%endif%}
+    </div>
+{% endblock %}

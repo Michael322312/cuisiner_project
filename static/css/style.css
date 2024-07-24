@@ -1,0 +1,105 @@
+body {
+    height: 100vh;
+}
+
+.recipe_img {
+    object-fit: cover;
+    width: 100%;
+    height: 50vh;
+    max-width: 800px;
+    border-radius: 2px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+.recipe {
+    max-width: 700px;
+}
+
+.item {
+    flex: 0.1 1 200px;
+    background: #ffffff;
+    margin: 10px;
+    padding: 10px;
+    box-sizing: border-box;
+    width: fit-content;
+    font-size: small;
+    width: 200px;
+    
+}
+
+.page-container {
+    display: flex;
+    justify-content: center; /* Centers the container on the page */
+}
+
+.container_2 {
+    width: 90%;
+    display: flex;
+    flex-flow: row wrap;
+    align-items: flex-start; /* Aligns items to the start vertically */
+}
+
+.rec_img {
+    object-fit: cover;
+    width: 500px;
+}
+
+
+.card-title2 {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+.card-title2 {
+    font-size: 1.25rem; /* Adjust as needed */
+}
+.card-img-top {
+    object-fit: cover;
+    height: 170px;
+    width: 100%;
+}
+.filter_pref {
+    width: 30%;
+    min-width: 120px;
+    max-width: 200px;
+}
+
+.filter_form {
+    display: inline-flex;
+    
+}
+
+
+.item2 {
+    flex: 1 1 100px;
+    background: #ffffff;
+    margin: 10px;
+    padding: 10px;
+    box-sizing: border-box;
+    width: fit-content;
+    font-size: small;
+    max-height: 300px;
+    min-width: 200px;
+    max-width: 250px;
+}
+
+
+@media (max-width: 500px) {
+    .item {
+      flex: 1 1 100%;
+    }
+    .item2 {
+        flex: 1 1 100%;
+        
+    }
+    .container_2 {
+        justify-content: center;
+    }
+
+    .filter_form{
+        margin: auto;
+    }
+}

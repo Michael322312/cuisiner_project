@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.jquery.min.js"></script>
+    <link href="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.min.css" rel="stylesheet"/>
+
+    <form method="POST" class="w-75 ms-3 mt-3">
+        {% csrf_token %}
+        <div class="container m-3">
+            <h3>Your preferences</h3>
+            <br>
+            {{form.fav_categories.label}}
+            {{form.fav_categories}}
+            <br>
+            <br>
+            {{form.hate_categories.label}}
+            {{form.hate_categories}}
+            <br>
+            <br>
+            {{form.fav_products.label}}
+            {{form.fav_products}}
+            <br>
+            <br>
+            {{form.hates_products.label}}
+            {{form.hates_products}}
+            <br>
+            <br>
+            {{form.diet.label}}
+            {{form.diet}}
+            <br>
+        </div>
+        <button type="submit" class="btn btn-primary m-3">Save</button>
+            
+    </form>
+    
+    <script>
+        $(".chosen-select").chosen({
+            no_results_text: "Nothing found!"
+        }); 
+    </script>
+{% endblock %}

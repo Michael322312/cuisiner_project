@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="m-3 ms-2">
+        <div class="btn-group ms-2" role="group" aria-label="Basic outlined example">
+            <a type="button" class="btn btn-outline-primary" href="{% url 'recipe:category_list' %}">Categories</a>
+            <a type="button" class="btn btn-outline-primary" href="{% url 'recipe:product_list' %}">Products</a>
+            <a type="button" class="btn btn-outline-primary active" href="{% url 'recipe:diet_list' %}">Diets</a>
+            <div class="dropdown rounded-0">
+                <button class="btn btn-outline-primary rounded-0 rounded-end dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Create
+                </button>
+                <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="{% url 'recipe:create_category' %}">Category</a></li>
+                <li><a class="dropdown-item" href="{% url 'recipe:create_product' %}">Product</a></li>
+                <li><a class="dropdown-item" href="{% url 'recipe:create_diet' %}">Diet</a></li>
+
+                </ul>
+            </div>
+        </div>
+        <form class="d-flex mt-3 ms-2" role="search" style="max-width: 500px; min-width: 250px;">
+            <input class="form-control me-2" type="search" placeholder="Search products" aria-label="Search" name="search" value="{{search_text}}">
+            <button class="btn btn-outline-success" type="submit">Search</button>
+        </form>
+        <div class="">
+            <ul class="container_2">
+                {% if diets %}
+                    {% for diet in diets %}
+                        <a href="{% url 'recipe:diet_detail' diet.pk %}" style="text-decoration: none;">
+                            <li class="card item mt-3 border">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        {{diet.name}}
+                                        <a href="{% url 'recipe:update_diet' diet.id%}" class="text-warning ms-1" style="text-decoration: none;">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                                                <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+                                            </svg>
+                                        </a>
+                                        <a href="{% url 'recipe:delete_diet' diet.id%}" class="text-danger" style="text-decoration: none;">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                                            <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0"/>
+                                        </svg>
+                                        </a>
+                                    </h5>
+
+                                </div>
+                            </li>
+                        </a>
+                    {% endfor %}
+                {%else%}
+                    <div class="fw-light text-start w-50 ms-2 mt-3">Diets not found</div>
+                {%endif%}
+
+            </ul>
+            {% if paginator.page_range|length > 1%}
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination ms-5 ">
+                        {% for page_num in paginator.page_range %}
+                            <li class="page-item"><a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </nav> 
+            {%endif%}
+        </div>
+    </div>
+{% endblock %}
