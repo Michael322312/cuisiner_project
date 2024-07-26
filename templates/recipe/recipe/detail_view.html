@@ -50,7 +50,7 @@
             
             <hr>
             {%if recipe.main_image%}
-                <img src="{{ recipe.main_image.url }}" alt="{{ recipe.title }}" class="recipe_img">
+                <img src="{{ recipe.main_image.url }}" alt="{{ recipe.title }}" class="recipe_img" style="image-rendering: optimizeQuality; ">
             {%else%}
                 <img src="{%static 'img/def_recipe.jpg'%}" alt="{{ recipe.title }}" class="recipe_img">
             {%endif%}
@@ -84,7 +84,20 @@
             <h3>Ingridients</h3>
             <ul class="ps-3 pt-3 list-group list-group-flush">
                 {%for ingridient in recipe.ingredients.all%}
-                    <div class="list-group-item">{{ingridient}}</div>
+                    {%if ingridient.product.category in user_fav_cat or ingridient.product.category in user_fav_prod%}
+                        {%if ingridient.product.category not in user_hate_cat and ingridient.product not in user_hate_prod%}
+                            <div class="list-group-item bg-success-subtle">
+                        {%else%}
+                            <div class="list-group-item bg-danger-subtle">
+                        {%endif%}
+                    {%elif ingridient.product.category in user_hate_cat or ingridient.product.category in user_hate_prod%}
+                        <div class="list-group-item bg-danger-subtle">
+
+                    {%else%}
+                        <div class="list-group-item">
+                    {%endif%}
+                        {{ingridient}}
+                    </div>
                 {%endfor%}
             </ul>
         </div>

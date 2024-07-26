@@ -11,14 +11,17 @@
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <link rel="icon" type="image/svg+xml" href="{% static 'img/icons/cooking.svg' %}">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">  
-
-
     <title>Cuisiner</title>
+    <style>
+        html {
+        scroll-behavior: smooth;
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-sm border-bottom p-3 sticky-top bg-white">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">
+            <a class="navbar-brand" href="/">
                 Cuisiner
                 <img src="{% static 'img/icons/cooking.svg' %}" alt="Logo" width="30" height="24" class="d-inline-block align-text-top">
             </a>
@@ -28,7 +31,7 @@
             <div class="collapse navbar-collapse pt-2" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item ">
-                      <a class="nav-link active" aria-current="page" href="#">Home</a>
+                      <a class="nav-link active" aria-current="page" href="/">Home</a>
                     </li>
                     <li class="nav-item">
                       <a class="nav-link" href="{% url 'recipe:recipe_list' %}">Recipes</a>
@@ -105,15 +108,16 @@
     </nav>
     {% block breadcrump %}
     {% endblock %}
+
     {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-                <div class="alert alert-danger w-50 mt-2 ms-1" role="alert">
-                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                </div>
-            {% endfor %}
-        </ul>
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">  <!-- singular -->
+                <a class="close" data-dismiss="alert">×</a>
+                {{ message|safe }}
+            </div>
+        {% endfor %}
     {% endif %}
+
     {% for field, errors in form.errors.items %}
         <ul class="messages">
         {% for error in errors %}

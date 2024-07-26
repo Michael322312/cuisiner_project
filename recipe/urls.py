@@ -18,10 +18,14 @@ from recipe.views import (
     DietDeleteView,
     DietUpdateView,
     DietListView,
-    DietDetailView
+    DietDetailView,
+    MainMenuView
 )
 
 urlpatterns = [
+    path('', MainMenuView.as_view(), name="main"),
+
+
     path("category_list/", CategoryListView.as_view(), name="category_list"),
     path("delete_category/<int:pk>", CategoryDeleteView.as_view(), name="delete_category"),
     path("create_category/", CategoryCreateView.as_view(), name="create_category"),

@@ -23,12 +23,14 @@
             </button>
             <form class=" dropdown-menu p-2">
                 {%if request.user.is_authenticated%}
-                    <select name="user_filter" id="user_filter" class="form-control filter_pref m-1 text-secondary">
-                        <option disabled selected value class="text-secondary fw-lighter">Preferences</option>
-                        <option value="all">All preferences</option>
-                        <option value="hated">Remove hated</option>
-                        <option value="favorite">Show favorite</option>
-                    </select>
+                    {%if request.user.preferences%}
+                        <select name="user_filter" id="user_filter" class="form-control filter_pref m-1 text-secondary">
+                            <option disabled selected value class="text-secondary fw-lighter">Preferences</option>
+                            <option value="all">All preferences</option>
+                            <option value="hated">Remove hated</option>
+                            <option value="favorite">Show favorite</option>
+                        </select>
+                    {%endif%}
                 {%endif%}
                 <select name="order" id="order" class="form-control m-1 filter_pref text-secondary">
                     <option value="revelant" {%if order_text ==  "revelant"%} selected {%endif%}>Revelant</option>

@@ -92,7 +92,7 @@
     <body class="d-flex align-items-center py-4 bg-body-tertiary">
         <main class="form-signin w-100 mx-auto my-auto">
           <form method="post">
-              {%csrf_token%}
+            {%csrf_token%}
               <img class="mb-4" src="{% static 'img/icons/cooking.svg' %}" alt="" width="72" height="57">
               <h1 class="h3 mb-3 fw-normal">Sign in</h1>
               {% if form.errors %}
