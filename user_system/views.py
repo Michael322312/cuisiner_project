@@ -6,7 +6,7 @@ from user_system.forms import CustomUserCreationForm, CustomUserUpdateForm, User
 from django.views.generic import CreateView, DeleteView, UpdateView, ListView, DetailView, TemplateView
 from user_system.models import CustomUser, UserPreference
 from django.urls import reverse_lazy
-from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
+from django.contrib.auth.views import LoginView, LogoutView, PasswordResetView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from user_system.mixins import RequestUserIsUserMixin
 from django.contrib.auth.forms import PasswordChangeForm
@@ -15,6 +15,10 @@ from django.http.response import HttpResponseRedirect, HttpResponse
 from django.views.generic.detail import SingleObjectTemplateResponseMixin
 from django.views.generic.edit import ModelFormMixin, ProcessFormView
 from django.shortcuts import redirect
+from user_system.email_sending import send_hello
+from django.contrib.messages.views import SuccessMessageMixin
+
+
 
 
 template_root = "user_system/"
@@ -39,10 +43,23 @@ class UserUpdateView(LoginRequiredMixin, RequestUserIsUserMixin, UpdateView):
         return context
 
 
-class ChangePasswordView(PasswordChangeView):
-    form_class = PasswordChangeForm
-    success_url = reverse_lazy("user_system:settings")
-    template_name = template_root + 'auth/change_password.html'
+class ResetPasswordView(SuccessMessageMixin,PasswordResetView):
+    template_name = template_root + 'auth/mail/password_reset.html'
+    email_template_name = template_root + 'auth/mail/password_reset_email.html'
+    subject_template_name = template_root+ 'auth/mail/password_reset_subject'
+    success_message = "We've sent you instructions for setting your password, " \
+                      "if an account exists with the email you entered. You should receive them shortly." \
+                      " If you don't receive an email, " \
+                      "please make sure you've entered the address you registered with, and check your spam folder."
+    success_url = reverse_lazy('recipe:recipe_list')
+
+    def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            self.template_name = template_root + 'auth/mail/password_reset.html'
+        else:
+            self.template_name = template_root + 'auth/mail/password_reset_nolog.html'
+        
+        return super().get(request, *args, **kwargs)
 
     
 class CustomLoginView(LoginView):

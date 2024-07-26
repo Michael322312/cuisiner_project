@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+    <style>
+        .main_start {
+            background-image: url("{% static 'img/main_1.jpg' %}");
+            height: 90vh;
+            width: 100%;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-blend-mode: lighten;     
+            background-position: center;
+            position: relative;
+            overflow: clip; 
+
+            
+
+            &:before {
+                content: '';
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    bottom: 0;
+                    left: 0;
+                    background-image: linear-gradient(to bottom right,#000000,#002f4b);
+                    opacity: .5; 
+            }
+
+        
+        }
+        .centered {
+            position: absolute;
+            top: 45%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 250%;
+            font-weight: bolder;
+            width: 50%;
+            max-width: 1000px;
+            overflow: clip;
+            transition: 1s;
+
+        }
+
+
+
+        .scrolling-wrapper {
+            overflow: hidden;
+            position: relative;
+        }
+
+        .scrolling-content {
+            display: flex;
+            animation: scroll 20s linear infinite;
+        }
+
+        .recipe-card-wrapper {
+            margin-right: 20px; /* Adjust this value to set the space between cards */
+        }
+
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .scrolling-content .col-sm-6, 
+        .scrolling-content .col-md-4, 
+        .scrolling-content .col-sm-3 {
+            flex: 0 0 auto;
+            width: auto;
+        }
+
+        @media (max-width: 800px) {
+            .centered{
+                font-size: 200%;
+                width: 60%;
+            }
+        }
+
+    </style>
+
+    <div class="main_start mb-4">
+        <p class="centered text-white text-start">
+            Start your cooking journey with <u>Cusiner</u>
+            <br>
+            <a  class="btn btn-primary fs-4 mt-3" href="{%if request.user.is_authenticated%} {%url 'recipe:recipe_list'%} {%else%} {%url 'user_system:log_in'%} {%endif%}">Let's go!</a>
+        </p>
+    </div>
+    
+    
+    <div class="p-5" >
+        <h1 class="pb-5 text-start">
+            Create, explore new recipes
+        </h1>
+        <div class="scrolling-wrapper">
+            <div class="scrolling-content d-flex">
+                {% for recipe in new_recipes %}
+                    <div class="recipe-card-wrapper col-sm-6 col-md-4 col-sm-3 mb-4">
+                        <a href="{% url 'recipe:recipe' recipe.id %}" style="text-decoration: none;">
+                            <div class="card" style="max-width: 200px; margin: auto;">
+                                {% if recipe.main_image %}
+                                    <img src="/media/{{ recipe.main_image }}" class="card-img-top" alt="{{ recipe.title }}">
+                                {% else %}
+                                    <img src="{% static 'img/def_recipe.jpg' %}" class="card-img-top" alt="Default Image">
+                                {% endif %}
+                                <div class="card-body">
+                                    <h5 class="card-title card-title2">{{ recipe.title }}</h5>
+                                    <p class="card-text" style="font-size: small;">
+                                        {{ recipe.author }}<br>
+                                        {{ recipe.upload_date }}
+                                    </p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                {% endfor %}
+                <!-- Duplicate the items for continuous scrolling effect -->
+                {% for recipe in new_recipes %}
+                    <div class="recipe-card-wrapper col-sm-6 col-md-4 col-sm-3 mb-4">
+                        <a href="{% url 'recipe:recipe' recipe.id %}" style="text-decoration: none;">
+                            <div class="card" style="max-width: 200px; margin: auto;">
+                                {% if recipe.main_image %}
+                                    <img src="/media/{{ recipe.main_image }}" class="card-img-top" alt="{{ recipe.title }}">
+                                {% else %}
+                                    <img src="{% static 'img/def_recipe.jpg' %}" class="card-img-top" alt="Default Image">
+                                {% endif %}
+                                <div class="card-body">
+                                    <h5 class="card-title card-title2">{{ recipe.title }}</h5>
+                                    <p class="card-text" style="font-size: small;">
+                                        {{ recipe.author }}<br>
+                                        {{ recipe.upload_date }}
+                                    </p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {%if request.user.is_authenticated%} 
+        {%if request.user.preferences%} 
+            <div class="p-5 mb-4 bg-body-tertiary rounded-3 mx-auto text-center"  >
+                <div class="text-center" >
+                <h1 class="display-5 fw-bold">Add preferences!</h1>
+                <p class="fs-4 p-2">New filters, recomendadions<br>Having ingridient color-helpers is great</p>
+                <button class="btn btn-primary btn-lg" type="button" href="{%url 'user_system:create_pref' %}">Set Your Tastes</button>
+                </div>
+            </div>
+        {%endif%}
+    {%else%}
+        <div class="p-5 mb-4 bg-body-tertiary rounded-3 mx-auto text-center"  >
+            <div class="text-center" >
+            <h1 class="display-5 fw-bold">Add preferences!</h1>
+            <p class="fs-4 p-2">New filters, recomendadions<br>Having ingridient color-helpers is great</p>
+            <button class="btn btn-primary btn-lg" type="button" href="{%url 'user_system:log_in' %}">Set Your Tastes</button>
+            </div>
+        </div>
+
+    {%endif%}
+    
+{% endblock content %}

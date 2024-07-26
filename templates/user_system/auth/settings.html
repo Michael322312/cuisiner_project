@@ -23,7 +23,7 @@
                 </a>
             </li>
             <li class="list-group-item p-3" style="text-decoration: none;">
-                <a href="{%url 'user_system:change_password' request.user.pk%}" style="text-decoration: none;">Change password</a>
+                <a href="{%url 'user_system:password_reset' %}" style="text-decoration: none;">Reset password</a>
             </li>
             <li class="list-group-item p-3">
                 <a href="{% url 'user_system:delete_user' request.user.pk %}" class="text-danger" style="text-decoration: none;">

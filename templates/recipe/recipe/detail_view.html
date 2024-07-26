@@ -5,23 +5,56 @@
 
     <div class="container pt-4 recipe ps-3 pe-3">
         <div class="intro">
-            <h2>{{recipe.title}}</h2>
+            <div class="d-flex justify-content-between">
+                <h2>{{recipe.title}}</h2>
+                <div class="dropdown">
+                    <button class="btn  dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
+                            <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
+                          </svg>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a class="dropdown-item text-warning" href="{% url 'recipe:update_recipe' recipe.pk%}">
+                                Edit recipe
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                    <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                                    <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+                                </svg>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item text-danger" href="{% url 'recipe:delete_recipe' recipe.pk%}">
+                                Delete recipe
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                                    <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0"/>
+                                  </svg>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <a style="font-size: 100%; text-decoration: none;" class="fw-normal text-secondary pt-2 float pb-2" >{{recipe.upload_date}}</a>
+            
             <div class="fs-6 fw-light">
-                <div name="author_recipe">
+                <p name="author_recipe" class="pt-2">
                     <a href="{% url 'recipe:user_recipes' recipe.author.pk %}" style="text-decoration: none;" class="text-primary">
                         {%if recipe.author.avatar %}
                             <img src="/media/{{ recipe.author.avatar}}" class="rounded-circle" width="25" height="25" style="object-fit: cover;">
                         {%endif%}
                         {{recipe.author}}
                     </a>
-                </div>
-                <div style="font-size: 75%;" class="fw-normal text-secondary pt-1">{{recipe.upload_date}}</div>
+                </p>
+            </div>
+
+            
             <hr>
             {%if recipe.main_image%}
-                <img src="{{ recipe.main_image.url }}" alt="{{ recipe.title }}" class="recipe_img">
+                <img src="{{ recipe.main_image.url }}" alt="{{ recipe.title }}" class="recipe_img" style="image-rendering: optimizeQuality; ">
             {%else%}
                 <img src="{%static 'img/def_recipe.jpg'%}" alt="{{ recipe.title }}" class="recipe_img">
             {%endif%}
+
         </div>
         
         <div name="sec_info" class="row pt-5 ps-3 pe-3 pb-3 mx-auto">
@@ -51,7 +84,20 @@
             <h3>Ingridients</h3>
             <ul class="ps-3 pt-3 list-group list-group-flush">
                 {%for ingridient in recipe.ingredients.all%}
-                    <div class="list-group-item">{{ingridient}}</div>
+                    {%if ingridient.product.category in user_fav_cat or ingridient.product.category in user_fav_prod%}
+                        {%if ingridient.product.category not in user_hate_cat and ingridient.product not in user_hate_prod%}
+                            <div class="list-group-item bg-success-subtle">
+                        {%else%}
+                            <div class="list-group-item bg-danger-subtle">
+                        {%endif%}
+                    {%elif ingridient.product.category in user_hate_cat or ingridient.product.category in user_hate_prod%}
+                        <div class="list-group-item bg-danger-subtle">
+
+                    {%else%}
+                        <div class="list-group-item">
+                    {%endif%}
+                        {{ingridient}}
+                    </div>
                 {%endfor%}
             </ul>
         </div>

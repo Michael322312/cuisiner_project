@@ -1,6 +1,6 @@
 from django.db.models.query import QuerySet
 from django.shortcuts import render
-from django.views.generic import CreateView, DeleteView, UpdateView, ListView, DetailView
+from django.views.generic import CreateView, DeleteView, UpdateView, ListView, DetailView, TemplateView
 from django.template.defaulttags import register
 from recipe.models import Category, Product, Recipe, Diet
 from django.urls import reverse_lazy
@@ -14,7 +14,16 @@ from django.contrib import messages
 from user_system.models import UserPreference
 from django.db.models import Q
 from user_system.models import CustomUser
+from recipe.mixins import UserIsOwnerMixin
 
+
+class MainMenuView(TemplateView):
+    template_name = "recipe/main.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["new_recipes"] = Recipe.objects.all().order_by("-upload_date")[:6]
+        return context
 
 
 @login_required(login_url="log_in/")
@@ -38,7 +47,7 @@ def create_recipe(request):
 
             for ing in formset.cleaned_data:
                 
-                if not ing['product'].piece_weight:
+                if ing['product'].piece_weight == 0:
                     messages.error(request, "Ingridient can't be pieced")
                     context = {"recipe_form": recipe_form, "formset": formset}
                     return render(
@@ -108,8 +117,10 @@ class RecipeListView(ListView):
         context = super().get_context_data(**kwargs)
         order_text = self.request.GET.get('order')
         search_text = self.request.GET.get('search')
+
         context["order_text"] = order_text if order_text else ''
         context["search_text"] = search_text if search_text else ''
+
         return context
 
 
@@ -186,13 +197,41 @@ class RecipeDetailView(DetailView):
     template_name = "recipe/recipe/detail_view.html"
     context_object_name = "recipe"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if not self.request.user.is_anonymous:
+            user_pref = UserPreference.objects.get(user=self.request.user)
+        else:
+            user_pref = None
+
+        context["user_fav_cat"] = user_pref.fav_categories.all() if user_pref else None
+        context["user_fav_prod"] = user_pref.fav_products.all() if user_pref else None
+
+        context["user_hate_cat"] = user_pref.hate_categories.all() if user_pref else None
+        context["user_hate_prod"] = user_pref.hates_products.all() if user_pref else None
+
+        return context
+
+
+class RecipeUpdateView(LoginRequiredMixin, UserIsOwnerMixin, UpdateView):
+    model = Recipe
+    template_name = "recipe/recipe/update_form.html"
+    success_url = reverse_lazy("recipe:recipe_list")
+    form_class = RecipeCreateForm
+
+
+class RecipeDeleteView(LoginRequiredMixin,UserIsOwnerMixin, DeleteView):
+    model = Recipe
+    template_name = "recipe/recipe/delete_confirm.html"
+    success_url = reverse_lazy("recipe:recipe_list")
+
 
 @method_decorator(staff_member_required, name="dispatch")
 class CategoryListView(ListView):
     model = Category
     context_object_name = "categories"
     template_name = "recipe/category/list_view.html"
-    paginate_by = 20
+    paginate_by = 10
 
     def get_queryset(self):
         query = self.request.GET.get("search")
@@ -243,7 +282,7 @@ class ProductListView(ListView):
     model = Product
     context_object_name = "products"
     template_name = "recipe/product/list_view.html"
-    paginate_by = 20
+    paginate_by = 10
 
     def get_queryset(self):
         query = self.request.GET.get("search")
@@ -286,7 +325,7 @@ class DietListView(ListView):
     model = Diet
     context_object_name = "diets"
     template_name = "recipe/diet/list_view.html"
-    paginate_by = 20
+    paginate_by = 10
 
     def get_queryset(self):
         query = self.request.GET.get("search")
