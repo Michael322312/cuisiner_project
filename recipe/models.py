@@ -8,9 +8,17 @@ import re
 
 def embed_url(video_url):
     regex = r"(?:https:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]+)"
-    return re.sub(regex, r"https://www.youtube.com/embed/\1",video_url)
+    return re.sub(regex, r"https://www.youtube.com/embed/\1", video_url)
 
-UNIT_CHOISES = [("ML", "ml"), ("L", "l"), ("G", "g"), ("KG", "kg"), ("PIECES","pcs")]
+
+UNIT_CHOISES = [
+    ("ML", "ml"),
+    ("L", "l"),
+    ("G", "g"),
+    ("KG", "kg"),
+    ("PIECES", "pcs")
+]
+
 
 class Category(models.Model):
     name = models.CharField(max_length=63, unique=True)
@@ -37,12 +45,13 @@ class Product(models.Model):
     )
 
     piece_weight = models.FloatField(
-        validators=[MinValueValidator(0), MaxValueValidator(999999)], blank=True,  null=True
+        validators=[MinValueValidator(0), MaxValueValidator(999999)],
+        blank=True,
+        null=True
     )
 
     def __str__(self):
         return self.name
-    
 
     class Meta:
         ordering = ["-id"]
@@ -61,24 +70,37 @@ class Diet(models.Model):
 
 
 class RecipeIngridient(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, related_name="recipe_ingridients")
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="recipe_ingridients"
+    )
     weight = models.FloatField(
         validators=[MinValueValidator(0), MaxValueValidator(999999)]
     )
-    weight_unit = models.CharField(max_length=23, choices=UNIT_CHOISES, default="G")
+    weight_unit = models.CharField(
+        max_length=23,
+        choices=UNIT_CHOISES,
+        default="G"
+    )
     recipe = models.ForeignKey(
         "Recipe", on_delete=models.CASCADE, related_name="ingredients"
     )
 
     def __str__(self):
         return f"{self.product} {self.weight} {self.get_weight_unit_display()}"
-    
+
     class Meta:
         ordering = ["-id"]
 
 
 class Recipe(models.Model):
-    author = models.ForeignKey(core.settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="recipes")
+    author = models.ForeignKey(
+        core.settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="recipes"
+    )
     title = models.CharField(max_length=63)
     main_image = models.ImageField(upload_to="recipe/", blank=True)
     url_yt_video = models.URLField(blank=True, null=True)
@@ -100,14 +122,14 @@ class Recipe(models.Model):
             result = ingredient.product.calories * ingredient.weight
 
             if ingredient.weight_unit in unit_type["small"]:
-                total_calories += result / 100 
+                total_calories += result / 100
             elif ingredient.weight_unit in unit_type["big"]:
                 total_calories += result * 10
             elif ingredient.weight_unit in unit_type["un_div"]:
                 total_calories += result / 100 * ingredient.product.piece_weight
 
         return total_calories
-    
+
     def save(self, *args, **kwargs):
         if self.url_yt_video:
             self.url_yt_video = embed_url(self.url_yt_video)
@@ -117,7 +139,7 @@ class Recipe(models.Model):
         self.total_calories = total_calories
 
         super(Recipe, self).save(*args, **kwargs)
-    
+
     class Meta:
         ordering = ['-id']
 

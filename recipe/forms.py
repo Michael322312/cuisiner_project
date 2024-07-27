@@ -14,8 +14,21 @@ IngridientInlineFormSet = inlineformset_factory(
     extra=1,
     widgets={
         'product': forms.Select(attrs={'class': 'prod_select'}),
-        'weight': forms.NumberInput(attrs={'class': 'form-control', 'type': 'number', 'min': '0', 'style': 'width:140%; min-width: 120px', 'placeholder': 'Weight'}),
-        'weight_unit': forms.Select(attrs={'class': 'form-control', 'style': 'width: 50px'})
+        'weight': forms.NumberInput(
+            attrs={
+                'class': 'form-control',
+                'type': 'number',
+                'min': '0',
+                'style': 'width:140%; min-width: 120px',
+                'placeholder': 'Weight'
+            }
+        ),
+        'weight_unit': forms.Select(
+            attrs={
+                'class': 'form-control',
+                'style': 'width: 50px'
+            }
+        )
     },
     labels={
         'product': '',
@@ -35,7 +48,13 @@ class RecipeCreateForm(forms.ModelForm):
     class Meta:
         model = Recipe
 
-        fields = ["title", "main_image", "url_yt_video", "introduction", "recipe_text"]
+        fields = [
+            "title",
+            "main_image",
+            "url_yt_video",
+            "introduction",
+            "recipe_text"
+        ]
 
         widgets = {
             "title": forms.TextInput(attrs={"class": "form-control"}),
@@ -65,26 +84,58 @@ class ProductCreateForm(forms.ModelForm):
     class Meta:
         model = Product
 
-        fields = ["name", "calories", "category", 'piece_weight']
+        fields = ["name", "calories", "category", "piece_weight"]
 
         widgets = {
             "name": forms.TextInput(attrs={"class": "form-control"}),
             "category": forms.Select(attrs={"class": "form-select"}),
-            "piece_weight": forms.NumberInput(attrs={"class": "form-select", "placeholder": "Piece weight", 'type': 'number', 'min': '0',})
+            "piece_weight": forms.NumberInput(attrs={
+                    "class": "form-select",
+                    "placeholder": "Piece weight",
+                    'type': 'number',
+                    'min': '0'
+                }
+            )
         }
 
-        labels = {"name": "Name", "calories": "Calories (per 100 grams)", "piece_weight": 'Enter piece weight in grams (If product is countable)'}
+        labels = {
+            "name": "Name",
+            "calories": "Calories (per 100 grams)",
+            "piece_weight": (
+                'Enter piece weight in grams '
+                '(If product is countable)'
+            )
+        }
 
 
 class DietCreateForm(forms.ModelForm):
     class Meta:
         model = Diet
 
-        fields = ["name","forriben_categories", "caloires_per_dish"]
+        fields = ["name", "forriben_categories", "caloires_per_dish"]
 
         widgets = {
             "name": forms.TextInput(attrs={"class": "form-control"}),
-            "forriben_categories": forms.SelectMultiple(attrs={"class": "form-control"}),
-            "caloires_per_dish": forms.NumberInput(attrs={"class": "form-select", "min": 0})        }
+            "forriben_categories": forms.SelectMultiple(
+                attrs={
+                    "class": "form-control"
+                }
+            ),
+            "caloires_per_dish": forms.NumberInput(
+                attrs={
+                    "class": "form-select",
+                    "min": 0
+                }
+            )
+        }
 
-        labels = {"forriben_categories": "Forriben categories (cmd button to select)", "caloires_per_dish": "Callories per dish (If diet needs low callories)"}
+        labels = {
+            "forriben_categories":  (
+                "Forriben categories"
+                "(cmd button to select)"
+            ),
+            "caloires_per_dish": (
+                "Callories per dish "
+                "(If diet needs low callories)"
+            )
+        }
