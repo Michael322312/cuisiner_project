@@ -111,7 +111,7 @@
 
     {% if messages %}
         {% for message in messages %}
-            <div class="alert alert-{{ message.tags }}">  <!-- singular -->
+            <div class="alert alert-{{ message.tags }} w-50 p-3 m-3">  <!-- singular -->
                 <a class="close" data-dismiss="alert">×</a>
                 {{ message|safe }}
             </div>
