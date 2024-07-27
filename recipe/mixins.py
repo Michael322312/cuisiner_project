@@ -1,6 +1,5 @@
 from user_system.models import CustomUser
 from django.core.exceptions import PermissionDenied
-from recipe.models import Recipe
 
 
 class RequestUserIsUserMixin:
