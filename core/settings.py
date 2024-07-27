@@ -26,7 +26,7 @@ SECRET_KEY = "django-insecure-jj7*(-fbz1*_%a5cie+k@q*&lm-k^tpt%27mo-nr8++$6h)lag
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['cuisiner.onrender.com','127.0.0.1']
 
 
 # Application definition
@@ -86,7 +86,7 @@ DATABASES = {
         "NAME": "postgres2",
         "USER": "michael",
         "PASSWORD": "password",
-        "HOST": "0.0.0.0",
+        "HOST": "localhost",
         "PORT": "5432",
     }
 }
@@ -159,4 +159,3 @@ EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
 
 
-ALLOWED_HOSTS = ['.onrender.com']
