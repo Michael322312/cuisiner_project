@@ -26,7 +26,7 @@ SECRET_KEY = "django-insecure-jj7*(-fbz1*_%a5cie+k@q*&lm-k^tpt%27mo-nr8++$6h)lag
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['cuisiner.onrender.com','127.0.0.1']
+ALLOWED_HOSTS = ['cuisiner-project.onrender.com','127.0.0.1']
 
 
 # Application definition
