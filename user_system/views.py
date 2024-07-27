@@ -15,7 +15,6 @@ from django.http.response import HttpResponseRedirect, HttpResponse
 from django.views.generic.detail import SingleObjectTemplateResponseMixin
 from django.views.generic.edit import ModelFormMixin, ProcessFormView
 from django.shortcuts import redirect
-from user_system.email_sending import send_hello
 from django.contrib.messages.views import SuccessMessageMixin
 
 
