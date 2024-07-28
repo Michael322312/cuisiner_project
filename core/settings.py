@@ -22,12 +22,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-jj7*(-fbz1*_%a5cie+k@q*&lm-k^tpt%27mo-nr8++$6h)lag"
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['.onrender.com', '127.0.0.1']
+ALLOWED_HOSTS = ['.onrender.com', '127.0.0.1', 'cuisiner-project.onrender.com']
 
 
 # Application definition
@@ -82,7 +82,7 @@ WSGI_APPLICATION = "core.wsgi.application"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    "default": dj_database_url.parse("postgresql://cuisinerdb_v6za_user:66EIoiERhEYETlJfW9Vtx3Vlo7fixYu3@dpg-cqj1qmeehbks73c4djsg-a.frankfurt-postgres.render.com/cuisinerdb_v6za")
+    "default": dj_database_url.parse(os.environ.get("DB_URL"))
 }
 
 
