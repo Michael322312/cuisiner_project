@@ -162,8 +162,6 @@ cython_debug/
 #.idea/
 
 
-#Static files
-static/img
 
 #launch file VS
 launch.json
