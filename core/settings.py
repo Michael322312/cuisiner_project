@@ -82,7 +82,7 @@ WSGI_APPLICATION = "core.wsgi.application"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    "default": dj_database_url.parse('postgresql://cuisinerdb_v6za_user:66EIoiERhEYETlJfW9Vtx3Vlo7fixYu3@dpg-cqj1qmeehbks73c4djsg-a.frankfurt-postgres.render.com/cuisinerdb_v6za')
+    "default": dj_database_url.parse(os.environ.get("DB_URL"))
 }
 
 
@@ -121,9 +121,15 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 
+if DEBUG:
+    STATICFILES_DIRS = [
+        BASE_DIR / "static",
+        BASE_DIR / "static/img/",
+    ]
+else:
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
