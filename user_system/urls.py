@@ -9,8 +9,8 @@ from user_system.views import (
     ResetPasswordView,
     DeleteUserView,
     UserPreferenceUpdateView,
-    UserPreferenceCreateView
-    
+    UserPreferenceCreateView,
+    UserFavorite
 )
 
 
@@ -25,6 +25,8 @@ urlpatterns = [
     path("delete_user/<int:pk>", DeleteUserView.as_view(), name="delete_user"),
     path("preferences/", UserPreferenceCreateView.as_view(), name="create_pref"),
     path("preferences/<int:pk>", UserPreferenceUpdateView.as_view(), name="edit_pref"),
+    path("favorite/<int:pk>", UserFavorite.as_view(), name="fav_recipe"),
+
 
 
 

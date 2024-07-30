@@ -1,7 +1,7 @@
 from django.db.models.base import Model as Model
 from django.db.models.query import QuerySet
 from django.forms import BaseModelForm
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from user_system.forms import CustomUserCreationForm, CustomUserUpdateForm, UserPreferenceCreateForm
 from django.views.generic import CreateView, DeleteView, UpdateView, ListView, DetailView, TemplateView
 from user_system.models import CustomUser, UserPreference
@@ -16,7 +16,7 @@ from django.views.generic.detail import SingleObjectTemplateResponseMixin
 from django.views.generic.edit import ModelFormMixin, ProcessFormView
 from django.shortcuts import redirect
 from django.contrib.messages.views import SuccessMessageMixin
-
+from recipe.models import Recipe
 
 
 
@@ -129,4 +129,22 @@ class UserPreferenceUpdateView(LoginRequiredMixin, UpdateView):
         else:
             return redirect("user_system:create_pref")
 
+
+class UserFavorite(UpdateView, LoginRequiredMixin):
+    model = CustomUser
+    fields='__all__'
+
+    def get_object(self):
+        recipe_id = self.kwargs.get("pk")
+        return get_object_or_404(Recipe, pk=recipe_id)
+
+    def post(self, request, *args, **kwargs):
+        recipe = self.get_object()
+        user = request.user
+        if recipe in user.favorite.all():
+            user.favorite.remove(recipe)
+        else:
+            user.favorite.add(recipe)
+        user.save()
+        return HttpResponseRedirect(request.POST.get('next', '/'))
 
