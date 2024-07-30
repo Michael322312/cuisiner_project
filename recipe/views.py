@@ -61,7 +61,7 @@ def create_recipe(request):
                 created_recipe.save()
                 return HttpResponseRedirect(reverse_lazy('recipe:recipe_list'))
 
-    context = {"recipe_form": recipe_form, "formset": formset}
+    context = {"recipe_form": recipe_form, "formset": formset, "product_list": Product.objects.all()}
 
     return render(
         template_name="recipe/recipe/create_form.html", context=context, request=request
