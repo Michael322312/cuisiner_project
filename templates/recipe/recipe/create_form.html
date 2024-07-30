@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 {% load static %}
+{%load crispy_forms_tags%}
 {% block content %}
+
     <style>
         .rec_form {
             min-width: 350px;
@@ -24,9 +26,7 @@
         }
     </style>
     <link rel="stylesheet" href="{% static 'css/recipe_styles.css' %}">  
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-    <script src="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.jquery.min.js"></script>
-    <link href="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.min.css" rel="stylesheet"/>
+
 
     <form method="POST" enctype="multipart/form-data" class="mx-auto p-4 rec_form">
         {% csrf_token %}
@@ -53,9 +53,7 @@
             <div id="ingredients-formset" class="ing_list">
                 {% for form in formset %}
                     <div class="ing-form">
-                        {{ form.product }}
-                        {{ form.weight }}
-                        {{ form.weight_unit }}
+                        {{ form|crispy }}
                     </div>
                 {% endfor %}
             </div>
@@ -71,7 +69,7 @@
     </form>
     <div id="empty-form" style="display: none;">
         <div class="ing-form">
-            {{ formset.empty_form.as_p }}
+            {{ formset.empty_form|crispy }}
         </div>
     </div>
     <div class="p-4 under_space"></div>
@@ -88,7 +86,7 @@
                 var totalForms = $('#id_ingredients-TOTAL_FORMS');
                 totalForms.val(parseInt(totalForms.val()) + 1);
             });
-            $(".prod_select").select2();
+            
         });
     </script>
 

@@ -92,7 +92,7 @@ class RecipeIngridient(models.Model):
         return f"{self.product} {self.weight} {self.get_weight_unit_display()}"
 
     class Meta:
-        ordering = ["-id"]
+        ordering = ["id"]
 
 
 class Recipe(models.Model):
