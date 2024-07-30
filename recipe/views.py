@@ -211,6 +211,68 @@ class UserRecipesListView(ListView, LoginRequiredMixin):
         return context
 
 
+class UserFavListView(ListView, LoginRequiredMixin):
+    model = Recipe
+    template_name = "recipe/recipe/user_favorites.html"
+    context_object_name = "recipes"
+    paginate_by = 20
+
+    def get_queryset(self):
+        user = CustomUser.objects.get(pk=self.request.user.pk)
+        for_user = self.request.GET.get("user_filter")
+        query = user.favorite.all()
+        search = self.request.GET.get("search")
+        order = self.request.GET.get("order")
+
+        if not user.is_anonymous:
+            if for_user:
+                user_pref = UserPreference.objects.get(user=user)
+                recipes_for_user = Recipe.objects
+
+                if for_user in ["hated", "all"]:
+                    recipes_for_user = recipes_for_user.exclude(
+                        Q(ingredients__product__category__in=user_pref.hate_categories.all())|
+                        Q(ingredients__product__in=user_pref.hates_products.all())
+                    )
+                if for_user in ["favorite", "all"]:
+                    recipes_for_user = recipes_for_user.filter(
+                        Q(ingredients__product__category__in=user_pref.fav_categories.all()) |
+                        Q(ingredients__product__in=user_pref.fav_products.all())
+                    )
+                query = recipes_for_user
+
+        if search:
+            query = query.filter(
+                Q(title__icontains=search) |
+                Q(ingredients__product__name__icontains=search)
+            )
+
+        if order and order != "revelant":
+            orders = {
+                "new": "-upload_date",
+                "old": "upload_date"
+            }
+            query = query.order_by(orders[order])
+        
+        return query.distinct()
+    
+    def get_context_data(self, **kwargs):
+
+        context = super().get_context_data(**kwargs)
+        order_text = self.request.GET.get('order')
+        search_text = self.request.GET.get('search')
+
+        try:
+            user= CustomUser.objects.get(pk = self.kwargs['pk'])
+        except:
+            user=self.request.user
+
+        context["order_text"] = order_text if order_text else ''
+        context["search_text"] = search_text if search_text else ''
+        context["user"] = user
+        return context
+
+
 class RecipeDetailView(DetailView):
     model = Recipe
     template_name = "recipe/recipe/detail_view.html"
