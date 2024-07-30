@@ -38,7 +38,7 @@
                     </li>
                     {% if request.user.is_authenticated %}
                         <li class="nav-item pe-2">
-                            <a class="nav-link" href="{% url 'recipe:user_recipes' %}">Favorite recipes</a>
+                            <a class="nav-link" href="{% url 'recipe:fav_recipes' %}">Favorites</a>
                         </li>
                     {%endif%}
 
