@@ -141,7 +141,7 @@
             <h3>Ingridients</h3>
             <ul class="ps-3 pt-3 list-group list-group-flush">
                 {%for ingridient in recipe.ingredients.all%}
-                    {%if ingridient.product.category in user_fav_cat or ingridient.product.category in user_fav_prod%}
+                    {%if ingridient.product.category in user_fav_cat or ingridient.product.category in user_fav_prod or ingridient.product in user_fav_prod or ingridient.product in user_hate_prod%}
                         {%if ingridient.product.category not in user_hate_cat and ingridient.product not in user_hate_prod%}
                             <div class="list-group-item bg-success-subtle">
                         {%else%}
