@@ -19,7 +19,9 @@ from recipe.views import (
     DietUpdateView,
     DietListView,
     DietDetailView,
-    MainMenuView
+    MainMenuView,
+    RecipeLike,
+    UserFavListView
 )
 
 urlpatterns = [
@@ -49,6 +51,9 @@ urlpatterns = [
     path("user_recipes/<int:pk>", UserRecipesListView.as_view(), name='user_recipes'),
     path("user_recipes/", UserRecipesListView.as_view(), name='user_recipes'),
     path("recipes/<int:pk>", RecipeDetailView.as_view(), name='recipe'),
+    path('like/<int:pk>', RecipeLike.as_view(), name='recipe_like'),
+    path('recipes/fav/', UserFavListView.as_view(), name='fav_recipes'),
+
 
 ]
 

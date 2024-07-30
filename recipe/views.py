@@ -1,5 +1,5 @@
 from django.db.models.query import QuerySet
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.views.generic import CreateView, DeleteView, UpdateView, ListView, DetailView, TemplateView
 from django.template.defaulttags import register
 from recipe.models import Category, Product, Recipe, Diet
@@ -59,7 +59,7 @@ def create_recipe(request):
                 created_recipe.save()
                 formset.save()
                 created_recipe.save()
-                return HttpResponseRedirect(reverse_lazy('recipe:category_list'))
+                return HttpResponseRedirect(reverse_lazy('recipe:recipe_list'))
 
     context = {"recipe_form": recipe_form, "formset": formset}
 
@@ -122,6 +122,25 @@ class RecipeListView(ListView):
         context["search_text"] = search_text if search_text else ''
 
         return context
+
+
+class RecipeLike(UpdateView, LoginRequiredMixin):
+    model = Recipe
+    fields='__all__'
+
+    def get_object(self):
+        post_id = self.kwargs.get("pk")
+        return get_object_or_404(Recipe, pk=post_id)
+
+    def post(self, request, *args, **kwargs):
+        recipe = self.get_object()
+        user = request.user
+        if user in recipe.likes.all():
+            recipe.likes.remove(user)
+        else:
+            recipe.likes.add(user)
+        recipe.save()
+        return HttpResponseRedirect(request.POST.get('next', '/'))
 
 
 class UserRecipesListView(ListView, LoginRequiredMixin):
@@ -192,6 +211,68 @@ class UserRecipesListView(ListView, LoginRequiredMixin):
         return context
 
 
+class UserFavListView(ListView, LoginRequiredMixin):
+    model = Recipe
+    template_name = "recipe/recipe/user_favorites.html"
+    context_object_name = "recipes"
+    paginate_by = 20
+
+    def get_queryset(self):
+        user = CustomUser.objects.get(pk=self.request.user.pk)
+        for_user = self.request.GET.get("user_filter")
+        query = user.favorite.all()
+        search = self.request.GET.get("search")
+        order = self.request.GET.get("order")
+
+        if not user.is_anonymous:
+            if for_user:
+                user_pref = UserPreference.objects.get(user=user)
+                recipes_for_user = Recipe.objects
+
+                if for_user in ["hated", "all"]:
+                    recipes_for_user = recipes_for_user.exclude(
+                        Q(ingredients__product__category__in=user_pref.hate_categories.all())|
+                        Q(ingredients__product__in=user_pref.hates_products.all())
+                    )
+                if for_user in ["favorite", "all"]:
+                    recipes_for_user = recipes_for_user.filter(
+                        Q(ingredients__product__category__in=user_pref.fav_categories.all()) |
+                        Q(ingredients__product__in=user_pref.fav_products.all())
+                    )
+                query = recipes_for_user
+
+        if search:
+            query = query.filter(
+                Q(title__icontains=search) |
+                Q(ingredients__product__name__icontains=search)
+            )
+
+        if order and order != "revelant":
+            orders = {
+                "new": "-upload_date",
+                "old": "upload_date"
+            }
+            query = query.order_by(orders[order])
+        
+        return query.distinct()
+    
+    def get_context_data(self, **kwargs):
+
+        context = super().get_context_data(**kwargs)
+        order_text = self.request.GET.get('order')
+        search_text = self.request.GET.get('search')
+
+        try:
+            user= CustomUser.objects.get(pk = self.kwargs['pk'])
+        except:
+            user=self.request.user
+
+        context["order_text"] = order_text if order_text else ''
+        context["search_text"] = search_text if search_text else ''
+        context["user"] = user
+        return context
+
+
 class RecipeDetailView(DetailView):
     model = Recipe
     template_name = "recipe/recipe/detail_view.html"
@@ -200,7 +281,10 @@ class RecipeDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if not self.request.user.is_anonymous:
-            user_pref = UserPreference.objects.get(user=self.request.user)
+            if self.request.user.preference.all():
+                user_pref = UserPreference.objects.get(user=self.request.user)
+            else:
+                user_pref = None
         else:
             user_pref = None
 

@@ -97,9 +97,9 @@
         <div class="scrolling-wrapper">
             <div class="scrolling-content d-flex">
                 {% for recipe in new_recipes %}
-                    <div class="recipe-card-wrapper col-sm-6 col-md-4 col-sm-3 mb-4">
+                    <div class="recipe-card-wrapper col-sm-6 col-md-4 col-sm-4 mb-4">
                         <a href="{% url 'recipe:recipe' recipe.id %}" style="text-decoration: none;">
-                            <div class="card" style="max-width: 200px; margin: auto;">
+                            <div class="card" style="max-width: 300px; margin: auto;">
                                 {% if recipe.main_image %}
                                     <img src="/media/{{ recipe.main_image }}" class="card-img-top" alt="{{ recipe.title }}">
                                 {% else %}
@@ -118,9 +118,9 @@
                 {% endfor %}
                 <!-- Duplicate the items for continuous scrolling effect -->
                 {% for recipe in new_recipes %}
-                    <div class="recipe-card-wrapper col-sm-6 col-md-4 col-sm-3 mb-4">
+                    <div class="recipe-card-wrapper col-sm-6 col-md-4 col-sm-4 mb-4">
                         <a href="{% url 'recipe:recipe' recipe.id %}" style="text-decoration: none;">
-                            <div class="card" style="max-width: 200px; margin: auto;">
+                            <div class="card" style="max-width: 300px; margin: auto;">
                                 {% if recipe.main_image %}
                                     <img src="/media/{{ recipe.main_image }}" class="card-img-top" alt="{{ recipe.title }}">
                                 {% else %}
