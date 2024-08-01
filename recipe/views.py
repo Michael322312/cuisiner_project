@@ -2,7 +2,7 @@ from django.db.models.query import QuerySet
 from django.shortcuts import render, get_object_or_404, HttpResponse
 from django.views.generic import CreateView, DeleteView, UpdateView, ListView, DetailView, TemplateView
 from django.template.defaulttags import register
-from recipe.models import Category, Product, Recipe, Diet
+from recipe.models import Category, Product, Recipe, Diet, RecipeIngridient
 from django.urls import reverse_lazy
 from django.contrib.admin.views.decorators import staff_member_required
 from django.utils.decorators import method_decorator
@@ -15,7 +15,6 @@ from user_system.models import UserPreference
 from django.db.models import Q
 from user_system.models import CustomUser
 from recipe.mixins import UserIsOwnerMixin
-
 
 
 class MainMenuView(TemplateView):
@@ -282,7 +281,7 @@ class RecipeDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if not self.request.user.is_anonymous:
-            if self.request.user.preference.all():
+            if self.request.user.preference:
                 user_pref = UserPreference.objects.get(user=self.request.user)
             else:
                 user_pref = None

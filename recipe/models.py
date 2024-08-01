@@ -95,11 +95,6 @@ class RecipeIngridient(models.Model):
         ordering = ["id"]
 
 
-class IngridientGroup(models.Model):
-    name = models.CharField(max_length=63, unique=True)
-    ingridients = models.ManyToManyField(RecipeIngridient, blank=True)
-
-
 class Recipe(models.Model):
     author = models.ForeignKey(
         core.settings.AUTH_USER_MODEL,
