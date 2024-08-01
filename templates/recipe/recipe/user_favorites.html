@@ -47,7 +47,7 @@
                             <a href="{% url 'recipe:recipe' recipe.id %}" style="text-decoration: none;">
                                 <div class="card" style="max-width: 400px; margin: auto;">
                                     {% if recipe.main_image %}
-                                        <img src="/media/{{ recipe.main_image }}" class="card-img-top" alt="{{ recipe.title }}">
+                                        <img src="{{ recipe.main_image.url }}" class="card-img-top" alt="{{ recipe.title }}">
                                     {% else %}
                                         <img src="{% static 'img/def_recipe.jpg' %}" class="card-img-top" alt="Default Image">
                                     {% endif %}
