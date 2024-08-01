@@ -30,23 +30,8 @@
 
     <form method="POST" enctype="multipart/form-data" class="mx-auto p-4 rec_form">
         {% csrf_token %}
-        <p class="fs-1 fw-light">Create recipe</p>
-        <div class="mb-3 ">
-            <label class="form-label" for="title">Recipe title</label>
-            {{ recipe_form.title }}
-        </div>
-        <div class="mb-3">
-            <label class="form-label" for="main_image">{{ recipe_form.main_image.label }}</label>
-            {{ recipe_form.main_image }}
-        </div>
-        <div class="mb-3">
-            <label class="form-label" for="url_yt_video">Link for YouTube video</label>
-            {{ recipe_form.url_yt_video }}
-        </div>
-        <div class="mb-3">
-            <label class="form-label" for="introduction">Recipe introduction</label>
-            {{ recipe_form.introduction }}
-        </div>
+        <p class="fs-1 fw-light">Group ingridients</p>
+
         <div class="mb-3">
             <label class="form-label" for="ingredients">Recipe ingredients</label>
             <button id="add-ingredient" type="button" class="btn btn-secondary mb-2">Add ingredient</button>

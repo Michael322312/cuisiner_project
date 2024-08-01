@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{%load crispy_forms_tags%}
 {% block content %}
     <style>
         .rec_form {
@@ -15,8 +16,11 @@
             .rec_form {
                 width: 100%;
                 margin-top: 0;
-                background-color: rgb(222, 231, 255);
+                background-color: #dcf2ffca;
                 border-radius: 0px;
+            }
+            .under_space {
+                background-color: #dcf2ffca;
             }
         }
     </style>
@@ -31,7 +35,7 @@
         </div>
         <div class="mb-3">
             <label class="form-label" for="main_image">{{ form.main_image.label }}</label>
-            {{ form.main_image }}
+            {{ form.main_image|default_if_none:img_rec }}
         </div>
         <div class="mb-3">
             <label class="form-label" for="url_yt_video">Link for YouTube video</label>
@@ -42,13 +46,20 @@
             {{ form.introduction }}
         </div>
         <div class="mb-3">
-            <label class="form-label" for="ingridients">Ingridients</label>
-            <div name="ingredients" class="border rounded p-2">
-                {%for ingridient in recipe.ingredients.all%}
-                    {{ingridient}}
-                    <br>
-                {%endfor%}
+            <label class="form-label" for="ingredients">Recipe ingredients</label>
+            <button id="add-ingredient" type="button" class="btn btn-secondary mb-2">Add ingredient</button>
+            <div id="ingredients-formset" class="ing_list">
+                {% for form in formset %}
+                    <div class="ing-form">
+                        {{ form.product|as_crispy_field}}
+                        {{ form.weight|as_crispy_field }}
+                        {{form.weight_unit|as_crispy_field}}
+                        {{ form.DELETE|as_crispy_field }}  
+                        
+                    </div>
+                {% endfor %}
             </div>
+            {{ formset.management_form }}
         </div>
         <div class="mb-3">
             <label class="form-label" for="recipe_text">Recipe text</label>
@@ -56,6 +67,27 @@
         </div>
         <button type="submit" class="btn btn-primary">Update</button>
     </form>
-    <div class="p-4"></div>
+    <div id="empty-form" style="display: none;">
+        <div class="ing-form">
+            {{ formset.empty_form|crispy }}
+        </div>
+    </div>
+    <div class="p-4 under_space"></div>
+    <script>
+        
+        $(document).ready(function() {
+            $('#add-ingredient').click(function() {
+                var formCount = $('#ingredients-formset .ing-form').length;
+                var emptyFormHtml = $('#empty-form .ing-form').html().replace(/__prefix__/g, formCount);
+                var newForm = $('<div class="ing-form">' + emptyFormHtml + '</div>');
+                $('#ingredients-formset').append(newForm);
+
+                // Update the total forms count
+                var totalForms = $('#id_ingredients-TOTAL_FORMS');
+                totalForms.val(parseInt(totalForms.val()) + 1);
+            });
+            
+        });
+    </script>
 
 {% endblock %}
