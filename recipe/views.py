@@ -1,5 +1,5 @@
 from django.db.models.query import QuerySet
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, HttpResponse
 from django.views.generic import CreateView, DeleteView, UpdateView, ListView, DetailView, TemplateView
 from django.template.defaulttags import register
 from recipe.models import Category, Product, Recipe, Diet
@@ -15,6 +15,7 @@ from user_system.models import UserPreference
 from django.db.models import Q
 from user_system.models import CustomUser
 from recipe.mixins import UserIsOwnerMixin
+
 
 
 class MainMenuView(TemplateView):
@@ -302,6 +303,43 @@ class RecipeUpdateView(LoginRequiredMixin, UserIsOwnerMixin, UpdateView):
     template_name = "recipe/recipe/update_form.html"
     success_url = reverse_lazy("recipe:recipe_list")
     form_class = RecipeCreateForm
+
+    def get_object(self):
+        return get_object_or_404(Recipe, pk=self.kwargs["pk"] )
+
+    def get_context_data(self, **kwargs):
+        context = super(RecipeUpdateView, self).get_context_data(**kwargs)
+        if self.request.POST:
+            context['formset'] = IngridientInlineFormSet(self.request.POST, self.request.FILES, instance=self.get_object())
+        else:
+            context['formset'] = IngridientInlineFormSet(instance=self.get_object())
+
+        context['img_rec'] = self.get_object().main_image
+
+        return context
+    
+    def form_valid(self, form):
+        ingredient_form = IngridientInlineFormSet(
+                self.request.POST, self.request.FILES, instance=self.get_object()
+            )
+        if ingredient_form.is_valid():
+            self.object = form.save()
+            ingredient_form.instance = self.get_object()
+            for ing in ingredient_form.cleaned_data:
+                try:
+                    if ing['product'].piece_weight == 0:
+                        messages.error(self.request, "Ingridient can't be pieced")
+                        context = {"recipe_form": form, "formset": ingredient_form}
+                        return render(
+                            template_name="recipe/recipe/update_form.html", context=context, request=self.request
+                        )
+                except:
+                    pass
+            
+            ingredient_form.save()
+            
+        
+        return super(RecipeUpdateView, self).form_valid(form)
 
 
 class RecipeDeleteView(LoginRequiredMixin,UserIsOwnerMixin, DeleteView):

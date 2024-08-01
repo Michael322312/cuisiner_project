@@ -6,11 +6,7 @@ body {
     
 }
 
-.ing_list {
-    display: flex;
-    flex-direction: column; /* Ensures each .ing-form is on a new line */
-    gap: 10px; /* Space between form groups */
-}
+
 
 .ing-form {
     display: flex;
