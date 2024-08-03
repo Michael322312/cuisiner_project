@@ -55,10 +55,7 @@
             <div id="ingredients-formset" class="ing_list">
                 {% for form in formset %}
                     <div class="ing-form">
-                        {{ form.product|as_crispy_field}}
-                        {{ form.weight|as_crispy_field }}
-                        {{form.weight_unit|as_crispy_field}}
-                        {{ form.DELETE|as_crispy_field }}  
+                        {{ form|crispy}}
                         
                     </div>
                 {% endfor %}

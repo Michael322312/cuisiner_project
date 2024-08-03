@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from recipe.models import Product, Category, Diet, Recipe
+from django.db.models import Q
 import core.settings
 
 
@@ -45,3 +46,21 @@ class UserPreference(models.Model):
     )
 
     diet = models.ManyToManyField(Diet, blank=True)
+
+
+    def recipe_prefernce_filter(self, for_user):
+        if for_user:
+            recipes_for_user = Recipe.objects
+
+            if for_user in ["hated", "all"]:
+                recipes_for_user = recipes_for_user.exclude(
+                    Q(ingredients__product__category__in=self.hate_categories.all())|
+                    Q(ingredients__product__in=self.hates_products.all())
+                )
+            if for_user in ["favorite", "all"]:
+                recipes_for_user = recipes_for_user.filter(
+                    Q(ingredients__product__category__in=self.fav_categories.all()) |
+                    Q(ingredients__product__in=self.fav_products.all())
+                )
+            return recipes_for_user
+        return None

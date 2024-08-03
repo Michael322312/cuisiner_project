@@ -17,8 +17,6 @@ from user_system.models import CustomUser
 from recipe.mixins import UserIsOwnerMixin
 
 
-
-
 class MainMenuView(TemplateView):
     template_name = "recipe/main.html"
 
@@ -84,20 +82,7 @@ class RecipeListView(ListView):
         query = Recipe.objects.all()
         if not user.is_anonymous:
             if for_user:
-                user_pref = UserPreference.objects.get(user=user)
-                recipes_for_user = Recipe.objects
-
-                if for_user in ["hated", "all"]:
-                    recipes_for_user = recipes_for_user.exclude(
-                        Q(ingredients__product__category__in=user_pref.hate_categories.all())|
-                        Q(ingredients__product__in=user_pref.hates_products.all())
-                    )
-                if for_user in ["favorite", "all"]:
-                    recipes_for_user = recipes_for_user.filter(
-                        Q(ingredients__product__category__in=user_pref.fav_categories.all()) |
-                        Q(ingredients__product__in=user_pref.fav_products.all())
-                    )
-                query = recipes_for_user
+                query = user.preference.recipe_prefernce_filter(for_user)
         
         if search:
             query = query.filter(
@@ -165,20 +150,7 @@ class UserRecipesListView(ListView, LoginRequiredMixin):
         query = Recipe.objects.filter(author= author)
         if not user.is_anonymous:
             if for_user:
-                user_pref = UserPreference.objects.get(user=user)
-                recipes_for_user = Recipe.objects
-
-                if for_user in ["hated", "all"]:
-                    recipes_for_user = recipes_for_user.exclude(
-                        Q(ingredients__product__category__in=user_pref.hate_categories.all())|
-                        Q(ingredients__product__in=user_pref.hates_products.all())
-                    )
-                if for_user in ["favorite", "all"]:
-                    recipes_for_user = recipes_for_user.filter(
-                        Q(ingredients__product__category__in=user_pref.fav_categories.all()) |
-                        Q(ingredients__product__in=user_pref.fav_products.all())
-                    )
-                query = recipes_for_user
+                query = user.preference.recipe_prefernce_filter(for_user)
 
         if search:
             query = query.filter(
@@ -227,20 +199,7 @@ class UserFavListView(ListView, LoginRequiredMixin):
 
         if not user.is_anonymous:
             if for_user:
-                user_pref = UserPreference.objects.get(user=user)
-                recipes_for_user = Recipe.objects
-
-                if for_user in ["hated", "all"]:
-                    recipes_for_user = recipes_for_user.exclude(
-                        Q(ingredients__product__category__in=user_pref.hate_categories.all()) |
-                        Q(ingredients__product__in=user_pref.hates_products.all())
-                    )
-                if for_user in ["favorite", "all"]:
-                    recipes_for_user = recipes_for_user.filter(
-                        Q(ingredients__product__category__in=user_pref.fav_categories.all()) |
-                        Q(ingredients__product__in=user_pref.fav_products.all())
-                    )
-                query = recipes_for_user
+                query = user.preference.recipe_prefernce_filter(for_user)
 
         if search:
             query = query.filter(
