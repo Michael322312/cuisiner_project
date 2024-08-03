@@ -2,7 +2,6 @@
 {% load static %}
 {%load crispy_forms_tags%}
 {% block content %}
-
     <style>
         .rec_form {
             min-width: 350px;
@@ -27,30 +26,47 @@
     </style>
     <link rel="stylesheet" href="{% static 'css/recipe_styles.css' %}">  
 
-
     <form method="POST" enctype="multipart/form-data" class="mx-auto p-4 rec_form">
         {% csrf_token %}
-        <p class="fs-1 fw-light">Group ingridients</p>
-
+        <p class="fs-2 fw-light">Create recipe</p>
+        <div class="mb-3 ">
+            <label class="form-label" for="title">Recipe title</label>
+            {{ recipe_form.title }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="main_image">{{ form.main_image.label }}</label>
+            {{ recipe_form.main_image }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="url_yt_video">Link for YouTube video</label>
+            {{ recipe_form.url_yt_video }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="introduction">Recipe dividible</label>
+            {{ recipe_form.is_dividible }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="introduction">Recipe introduction</label>
+            {{ recipe_form.introduction }}
+        </div>
         <div class="mb-3">
             <label class="form-label" for="ingredients">Recipe ingredients</label>
             <button id="add-ingredient" type="button" class="btn btn-secondary mb-2">Add ingredient</button>
             <div id="ingredients-formset" class="ing_list">
                 {% for form in formset %}
                     <div class="ing-form">
-                        {{ form|crispy }}
+                        {{ form|crispy}}
+                        
                     </div>
                 {% endfor %}
             </div>
             {{ formset.management_form }}
         </div>
-        
         <div class="mb-3">
             <label class="form-label" for="recipe_text">Recipe text</label>
             {{ recipe_form.recipe_text }}
         </div>
         <button type="submit" class="btn btn-primary">Create</button>
-
     </form>
     <div id="empty-form" style="display: none;">
         <div class="ing-form">

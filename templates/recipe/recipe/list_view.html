@@ -24,7 +24,7 @@
             </button>
             <form class=" dropdown-menu p-2">
                 {%if request.user.is_authenticated%}
-                    {%if request.user.preferences%}
+                    {%if request.user.preference%}
                         <select name="user_filter" id="user_filter" class="form-control filter_pref m-1 text-secondary">
                             <option disabled selected value class="text-secondary fw-lighter">Preferences</option>
                             <option value="all">All preferences</option>

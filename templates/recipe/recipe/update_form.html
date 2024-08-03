@@ -42,6 +42,10 @@
             {{ form.url_yt_video }}
         </div>
         <div class="mb-3">
+            <label class="form-label" for="introduction">Recipe dividible</label>
+            {{ form.is_dividible }}
+        </div>
+        <div class="mb-3">
             <label class="form-label" for="introduction">Recipe introduction</label>
             {{ form.introduction }}
         </div>
@@ -51,10 +55,7 @@
             <div id="ingredients-formset" class="ing_list">
                 {% for form in formset %}
                     <div class="ing-form">
-                        {{ form.product|as_crispy_field}}
-                        {{ form.weight|as_crispy_field }}
-                        {{form.weight_unit|as_crispy_field}}
-                        {{ form.DELETE|as_crispy_field }}  
+                        {{ form|crispy}}
                         
                     </div>
                 {% endfor %}

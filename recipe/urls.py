@@ -53,8 +53,6 @@ urlpatterns = [
     path("recipes/<int:pk>", RecipeDetailView.as_view(), name='recipe'),
     path('like/<int:pk>', RecipeLike.as_view(), name='recipe_like'),
     path('recipes/fav/', UserFavListView.as_view(), name='fav_recipes'),
-
-
 ]
 
 app_name = "recipe"
