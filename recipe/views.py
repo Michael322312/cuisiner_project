@@ -17,6 +17,8 @@ from user_system.models import CustomUser
 from recipe.mixins import UserIsOwnerMixin
 
 
+
+
 class MainMenuView(TemplateView):
     template_name = "recipe/main.html"
 
@@ -177,23 +179,22 @@ class UserRecipesListView(ListView, LoginRequiredMixin):
                         Q(ingredients__product__in=user_pref.fav_products.all())
                     )
                 query = recipes_for_user
-        
+
         if search:
             query = query.filter(
                 Q(title__icontains=search) |
                 Q(ingredients__product__name__icontains=search)
             )
-        
+
         if order and order != "revelant":
             orders = {
                 "new": "-upload_date",
                 "old": "upload_date"
             }
             query = query.order_by(orders[order])
-        
-        
+
         return query.distinct()
-    
+
     def get_context_data(self, **kwargs):
 
         context = super().get_context_data(**kwargs)
@@ -201,9 +202,9 @@ class UserRecipesListView(ListView, LoginRequiredMixin):
         search_text = self.request.GET.get('search')
 
         try:
-            user= CustomUser.objects.get(pk = self.kwargs['pk'])
+            user = CustomUser.objects.get(pk=self.kwargs['pk'])
         except:
-            user=self.request.user
+            user = self.request.user
 
         context["order_text"] = order_text if order_text else ''
         context["search_text"] = search_text if search_text else ''
@@ -231,7 +232,7 @@ class UserFavListView(ListView, LoginRequiredMixin):
 
                 if for_user in ["hated", "all"]:
                     recipes_for_user = recipes_for_user.exclude(
-                        Q(ingredients__product__category__in=user_pref.hate_categories.all())|
+                        Q(ingredients__product__category__in=user_pref.hate_categories.all()) |
                         Q(ingredients__product__in=user_pref.hates_products.all())
                     )
                 if for_user in ["favorite", "all"]:
@@ -253,9 +254,9 @@ class UserFavListView(ListView, LoginRequiredMixin):
                 "old": "upload_date"
             }
             query = query.order_by(orders[order])
-        
+
         return query.distinct()
-    
+
     def get_context_data(self, **kwargs):
 
         context = super().get_context_data(**kwargs)
@@ -263,9 +264,9 @@ class UserFavListView(ListView, LoginRequiredMixin):
         search_text = self.request.GET.get('search')
 
         try:
-            user= CustomUser.objects.get(pk = self.kwargs['pk'])
+            user = CustomUser.objects.get(pk=self.kwargs['pk'])
         except:
-            user=self.request.user
+            user = self.request.user
 
         context["order_text"] = order_text if order_text else ''
         context["search_text"] = search_text if search_text else ''
@@ -287,12 +288,19 @@ class RecipeDetailView(DetailView):
                 user_pref = None
         else:
             user_pref = None
+        if user_pref:
+            fav_cat = user_pref.fav_categories.all()
+            fav_prod = user_pref.fav_products.all()
+            hate_cat = user_pref.hate_categories.all()
+            hate_prod = user_pref.hates_products.all()
+        else:
+            fav_cat = fav_prod = hate_cat = hate_prod = None
 
-        context["user_fav_cat"] = user_pref.fav_categories.all() if user_pref else None
-        context["user_fav_prod"] = user_pref.fav_products.all() if user_pref else None
+        context["user_fav_cat"] = fav_cat
+        context["user_fav_prod"] = fav_prod
 
-        context["user_hate_cat"] = user_pref.hate_categories.all() if user_pref else None
-        context["user_hate_prod"] = user_pref.hates_products.all() if user_pref else None
+        context["user_hate_cat"] = hate_cat
+        context["user_hate_prod"] = hate_prod
 
         return context
 
@@ -304,22 +312,30 @@ class RecipeUpdateView(LoginRequiredMixin, UserIsOwnerMixin, UpdateView):
     form_class = RecipeCreateForm
 
     def get_object(self):
-        return get_object_or_404(Recipe, pk=self.kwargs["pk"] )
+        return get_object_or_404(Recipe, pk=self.kwargs["pk"])
 
     def get_context_data(self, **kwargs):
         context = super(RecipeUpdateView, self).get_context_data(**kwargs)
         if self.request.POST:
-            context['formset'] = IngridientInlineFormSet(self.request.POST, self.request.FILES, instance=self.get_object())
+            context['formset'] = IngridientInlineFormSet(
+                self.request.POST,
+                self.request.FILES,
+                instance=self.get_object()
+            )
         else:
-            context['formset'] = IngridientInlineFormSet(instance=self.get_object())
+            context['formset'] = IngridientInlineFormSet(
+                instance=self.get_object()
+            )
 
         context['img_rec'] = self.get_object().main_image
 
         return context
-    
+
     def form_valid(self, form):
         ingredient_form = IngridientInlineFormSet(
-                self.request.POST, self.request.FILES, instance=self.get_object()
+                self.request.POST,
+                self.request.FILES,
+                instance=self.get_object()
             )
         if ingredient_form.is_valid():
             self.object = form.save()
@@ -327,21 +343,28 @@ class RecipeUpdateView(LoginRequiredMixin, UserIsOwnerMixin, UpdateView):
             for ing in ingredient_form.cleaned_data:
                 try:
                     if ing['product'].piece_weight == 0:
-                        messages.error(self.request, "Ingridient can't be pieced")
-                        context = {"recipe_form": form, "formset": ingredient_form}
+                        messages.error(
+                            self.request,
+                            "Ingridient can't be pieced"
+                        )
+                        context = {
+                            "recipe_form": form,
+                            "formset": ingredient_form
+                        }
                         return render(
-                            template_name="recipe/recipe/update_form.html", context=context, request=self.request
+                            template_name="recipe/recipe/update_form.html",
+                            context=context,
+                            request=self.request
                         )
                 except:
                     pass
-            
+
             ingredient_form.save()
-            
-        
+
         return super(RecipeUpdateView, self).form_valid(form)
 
 
-class RecipeDeleteView(LoginRequiredMixin,UserIsOwnerMixin, DeleteView):
+class RecipeDeleteView(LoginRequiredMixin, UserIsOwnerMixin, DeleteView):
     model = Recipe
     template_name = "recipe/recipe/delete_confirm.html"
     success_url = reverse_lazy("recipe:recipe_list")
@@ -359,7 +382,7 @@ class CategoryListView(ListView):
         if query:
             return Category.objects.filter(name__icontains=query)
         return Category.objects.all()
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         search_text = self.request.GET.get('search')
@@ -414,7 +437,7 @@ class ProductListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         search_text = self.request.GET.get('search')
-        context["search_text"] = self.request.GET.get('search') if search_text else ''
+        context["search_text"] = search_text if search_text else ''
         return context
 
 
@@ -457,7 +480,7 @@ class DietListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         search_text = self.request.GET.get('search')
-        context["search_text"] = self.request.GET.get('search') if search_text else ''
+        context["search_text"] = search_text if search_text else ''
         return context
 
 
@@ -481,10 +504,3 @@ class DietUpdateView(UpdateView):
     template_name = "recipe/diet/update_form.html"
     success_url = reverse_lazy("recipe:diet_list")
     form_class = DietCreateForm
-
-
-@method_decorator(staff_member_required, name="dispatch")
-class DietDetailView(DetailView):
-    model = Diet
-    template_name = "recipe/diet/detail_view.html"
-    context_object_name = "diet"

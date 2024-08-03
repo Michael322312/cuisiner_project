@@ -109,8 +109,11 @@ class Recipe(models.Model):
     upload_date = models.DateField(auto_now=True)
     total_calories = models.IntegerField(default=0)
     is_dividible = models.BooleanField(default=False)
-    likes = models.ManyToManyField("user_system.CustomUser", related_name="liked_recipes", blank=True)
-
+    likes = models.ManyToManyField(
+        "user_system.CustomUser",
+        related_name="liked_recipes",
+        blank=True
+    )
 
     def calculate_total_calories(self):
         unit_type = {
