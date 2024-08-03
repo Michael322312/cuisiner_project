@@ -52,6 +52,7 @@ class RecipeCreateForm(forms.ModelForm):
             "title",
             "main_image",
             "url_yt_video",
+            "is_dividible",
             "introduction",
             "recipe_text"
         ]
@@ -62,6 +63,7 @@ class RecipeCreateForm(forms.ModelForm):
             "url_yt_video": forms.TextInput(
                 attrs={"class": "form-control", "type": "url"}
             ),
+            "is_dividible": forms.CheckboxInput(attrs={"class": "form-checkbox"}),
             "introduction": forms.TextInput(attrs={"class": "form-control"}),
             "recipe_text": forms.Textarea(attrs={"class": "form-control"}),
         }
