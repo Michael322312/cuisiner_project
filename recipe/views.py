@@ -37,7 +37,6 @@ def create_recipe(request):
     if request.method == "POST":
         recipe_form = RecipeCreateForm(request.POST, request.FILES)
 
-        formset = IngridientInlineFormSet(request.POST, request.FILES)
         if recipe_form.is_valid():
             created_recipe = recipe_form.save(commit=False)
 
