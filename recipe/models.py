@@ -54,7 +54,7 @@ class Product(models.Model):
         return self.name
 
     class Meta:
-        ordering = ["-id"]
+        ordering = ["name"]
 
 
 class Diet(models.Model):

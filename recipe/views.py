@@ -29,38 +29,31 @@ class MainMenuView(TemplateView):
 @login_required(login_url="log_in/")
 def create_recipe(request):
     recipe = Recipe()
-
     recipe_form = RecipeCreateForm(instance=recipe)
-
     formset = IngridientInlineFormSet(instance=recipe)
-
     if request.method == "POST":
         recipe_form = RecipeCreateForm(request.POST, request.FILES)
-
+        formset = IngridientInlineFormSet(request.POST, request.FILES)
         if recipe_form.is_valid():
             created_recipe = recipe_form.save(commit=False)
-
+            formset = IngridientInlineFormSet(
+                request.POST, request.FILES, instance=created_recipe
+            )
+            for ing in formset.cleaned_data:
+                
+                if ing['product'].piece_weight == 0:
+                    messages.error(request, "Ingridient can't be pieced")
+                    context = {"recipe_form": recipe_form, "formset": formset}
+                    return render(
+                        template_name="recipe/recipe/create_form.html", context=context, request=request
+                    )
             if formset.is_valid():
-                formset = IngridientInlineFormSet(
-                    request.POST, request.FILES, instance=created_recipe
-                )
-
-                for ing in formset.cleaned_data:
-                    
-                    if ing['product'].piece_weight == 0:
-                        messages.error(request, "Ingridient can't be pieced")
-                        context = {"recipe_form": recipe_form, "formset": formset}
-                        return render(
-                            template_name="recipe/recipe/create_form.html", context=context, request=request
-                        )
                 created_recipe.author = request.user
                 created_recipe.save()
                 formset.save()
                 created_recipe.save()
                 return HttpResponseRedirect(reverse_lazy('recipe:recipe_list'))
-
     context = {"recipe_form": recipe_form, "formset": formset, "product_list": Product.objects.all()}
-
     return render(
         template_name="recipe/recipe/create_form.html", context=context, request=request
     )
