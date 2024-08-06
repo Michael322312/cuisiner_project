@@ -6,12 +6,14 @@ Here you can save you food preferences ( favorite/hated categories/products or e
 For better user expirience ingridients will be marked in green/red. Whether user likes that ingridient or not.
 
 ## Launch
-Install all needed python modules/libraries from `requirements`
+Install all needed python modules/libraries from `requirements.txt`
 
 After that connect DB and enter all needed VENV variables. 
 
 In `core/settings.py`
-
+<br>
+To set all venv var use `export NAME_VAR = VALUE_VAR`
+<br>
 Set django secret key
 ```python
 SECRET_KEY = os.environ.get("SECRET_KEY")
@@ -53,6 +55,7 @@ python3 manage.py createsuperuser
 ```console
 python3 manage.py runserver
 ```
+<br>
 
 # Screenshots
 <img width="1016" alt="Screenshot 2024-08-06 at 12 26 23" src="https://github.com/user-attachments/assets/4a62784e-fbaa-438c-b9e4-e353e0bec23f">
