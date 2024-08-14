@@ -232,7 +232,7 @@ class RecipeDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if not self.request.user.is_anonymous:
-            if self.request.user.preference:
+            if UserPreference.objects.get(user=self.request.user):
                 user_pref = UserPreference.objects.get(user=self.request.user)
             else:
                 user_pref = None
