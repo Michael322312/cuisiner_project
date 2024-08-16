@@ -40,13 +40,15 @@ def create_recipe(request):
                 request.POST, request.FILES, instance=created_recipe
             )
             for ing in formset.cleaned_data:
-                
-                if ing['product'].piece_weight == 0:
-                    messages.error(request, "Ingridient can't be pieced")
-                    context = {"recipe_form": recipe_form, "formset": formset}
-                    return render(
-                        template_name="recipe/recipe/create_form.html", context=context, request=request
-                    )
+                try:
+                    if ing['product'].piece_weight == 0:
+                        messages.error(request, "Ingridient can't be pieced")
+                        context = {"recipe_form": recipe_form, "formset": formset}
+                        return render(
+                            template_name="recipe/recipe/create_form.html", context=context, request=request
+                        )
+                except:
+                    pass
             if formset.is_valid():
                 created_recipe.author = request.user
                 created_recipe.save()

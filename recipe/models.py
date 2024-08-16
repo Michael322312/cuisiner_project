@@ -105,7 +105,7 @@ class Recipe(models.Model):
     main_image = models.ImageField(upload_to="recipe/", blank=True)
     url_yt_video = models.URLField(blank=True, null=True)
     introduction = models.TextField(blank=True, null=True)
-    recipe_text = models.TextField()
+    recipe_text = models.TextField(blank=True, null=True)
     upload_date = models.DateField(auto_now=True)
     total_calories = models.IntegerField(default=0)
     is_dividible = models.BooleanField(default=False)

@@ -103,7 +103,7 @@
         </div>
         
         <div name="sec_info" class="row pt-5 ps-3 pe-3 pb-3 mx-auto">
-            {% if recipe.introduction %}
+            {% if recipe.introduction%}
                 <div class="col-6 border p-3 bg-warning-subtle rounded me-2">
                     <h3>Introduction</h3>
                     {{recipe.introduction}}
@@ -125,35 +125,37 @@
                 </iframe>
             </div>
         {%endif%}
-        <div class="pt-5 ps-3 pe-3 pb-3">
-            <h3>Ingridients</h3>
-            <ul class="ps-3 pt-3 list-group list-group-flush">
-                {%for ingridient in recipe.ingredients.all%}
-                    {%if ingridient.product.category in user_fav_cat or ingridient.product.category in user_fav_prod or ingridient.product in user_fav_prod or ingridient.product in user_hate_prod%}
-                        {%if ingridient.product.category not in user_hate_cat and ingridient.product not in user_hate_prod%}
-                            <div class="list-group-item bg-success-subtle">
-                        {%else%}
+        {% if recipe.ingredients.all%}
+            <div class="pt-5 ps-3 pe-3 pb-3">
+                <h3>Ingridients</h3>
+                <ul class="ps-3 pt-3 list-group list-group-flush">
+                    {%for ingridient in recipe.ingredients.all%}
+                        {%if ingridient.product.category in user_fav_cat or ingridient.product.category in user_fav_prod or ingridient.product in user_fav_prod or ingridient.product in user_hate_prod%}
+                            {%if ingridient.product.category not in user_hate_cat and ingridient.product not in user_hate_prod%}
+                                <div class="list-group-item bg-success-subtle">
+                            {%else%}
+                                <div class="list-group-item bg-danger-subtle">
+                            {%endif%}
+                        {%elif ingridient.product.category in user_hate_cat or ingridient.product.category in user_hate_prod%}
                             <div class="list-group-item bg-danger-subtle">
+
+                        {%else%}
+                            <div class="list-group-item">
                         {%endif%}
-                    {%elif ingridient.product.category in user_hate_cat or ingridient.product.category in user_hate_prod%}
-                        <div class="list-group-item bg-danger-subtle">
-
-                    {%else%}
-                        <div class="list-group-item">
-                    {%endif%}
-                        {{ingridient}}
-                    </div>
-                {%endfor%}
-            </ul>
-        </div>
-
-        <div class="pt-5 ps-3 pe-3 pb-3">
-            <h3>Recipe</h3>
-            <div class="ps-4 lh-lg">
-                {{recipe.recipe_text|linebreaks}}
+                            {{ingridient}}
+                        </div>
+                    {%endfor%}
+                </ul>
             </div>
-        </div>
-
+        {%endif%}
+        {% if recipe.recipe_text%}
+            <div class="pt-5 ps-3 pe-3 pb-3">
+                <h3>Recipe</h3>
+                <div class="ps-4 lh-lg">
+                    {{recipe.recipe_text|linebreaks}}
+                </div>
+            </div>
+        {%endif%}
     </div>
 
 
