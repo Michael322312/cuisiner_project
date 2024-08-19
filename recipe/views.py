@@ -39,16 +39,7 @@ def create_recipe(request):
             formset = IngridientInlineFormSet(
                 request.POST, request.FILES, instance=created_recipe
             )
-            for ing in formset.cleaned_data:
-                try:
-                    if ing['product'].piece_weight == 0:
-                        messages.error(request, "Ingridient can't be pieced")
-                        context = {"recipe_form": recipe_form, "formset": formset}
-                        return render(
-                            template_name="recipe/recipe/create_form.html", context=context, request=request
-                        )
-                except:
-                    pass
+
             if formset.is_valid():
                 created_recipe.author = request.user
                 created_recipe.save()
@@ -279,7 +270,7 @@ class RecipeUpdateView(LoginRequiredMixin, UserIsOwnerMixin, UpdateView):
                 instance=self.get_object()
             )
 
-        context['img_rec'] = self.get_object().main_image
+        context['img_rec'] = self.get_object().main_image.url if self.get_object().main_image else None
 
         return context
 
@@ -289,31 +280,29 @@ class RecipeUpdateView(LoginRequiredMixin, UserIsOwnerMixin, UpdateView):
                 self.request.FILES,
                 instance=self.get_object()
             )
-        if ingredient_form.is_valid():
-            self.object = form.save()
-            ingredient_form.instance = self.get_object()
-            for ing in ingredient_form.cleaned_data:
-                try:
-                    if ing['product'].piece_weight == 0:
-                        messages.error(
-                            self.request,
-                            "Ingridient can't be pieced"
-                        )
-                        context = {
-                            "recipe_form": form,
-                            "formset": ingredient_form
-                        }
-                        return render(
-                            template_name="recipe/recipe/update_form.html",
-                            context=context,
-                            request=self.request
-                        )
-                except:
-                    pass
+        if form.is_valid():
+            if ingredient_form.is_valid():
+                ingredient_form.instance = self.get_object()
+                ingredient_form.save()
+                self.object = form.save()
+                return super(RecipeUpdateView, self).form_valid(form)
+            
+            return render(
+                template_name="recipe/recipe/update_form.html",
+                context=self.get_context_data(),
+                request=self.request
+            )
+        else:
+            messages.error(
+                self.request,
+                "Error occured"
+            )
 
-            ingredient_form.save()
-
-        return super(RecipeUpdateView, self).form_valid(form)
+            return render(
+                template_name="recipe/recipe/update_form.html",
+                context=self.get_context_data(),
+                request=self.request
+            )
 
 
 class RecipeDeleteView(LoginRequiredMixin, UserIsOwnerMixin, DeleteView):
