@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {%load crispy_forms_tags%}
+
 {% block content %}
     <style>
         .rec_form {
@@ -52,11 +53,14 @@
         <div class="mb-3">
             <label class="form-label" for="ingredients">Recipe ingredients</label>
             <button id="add-ingredient" type="button" class="btn btn-secondary mb-2">Add ingredient</button>
+
             <div id="ingredients-formset" class="ing_list">
                 {% for form in formset %}
+                    <div class="w-50">{{ form|as_crispy_errors}}</div>
                     <div class="ing-form">
-                        {{ form|crispy}}
                         
+                        {{ form|crispy}}
+
                     </div>
                 {% endfor %}
             </div>

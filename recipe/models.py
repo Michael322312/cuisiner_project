@@ -3,6 +3,8 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db.models.signals import pre_delete
 from django.dispatch.dispatcher import receiver
 import core.settings
+from django.core.exceptions import ValidationError, NON_FIELD_ERRORS
+from django.forms.utils import ErrorDict
 import re
 
 
@@ -91,6 +93,19 @@ class RecipeIngridient(models.Model):
     def __str__(self):
         return f"{self.product} {self.weight} {self.get_weight_unit_display()}"
 
+    def clean(self, *args, **kwargs):
+        if self.weight_unit == 'PIECES':
+            if not self.product.piece_weight:
+                raise ValidationError([{NON_FIELD_ERRORS: [f"{self.product} can't be pieced"]}])
+        if self.weight == 0:
+            raise ValidationError([{NON_FIELD_ERRORS: [f"{self.product} can't weight 0'"]}])
+        super().clean(*args, **kwargs)
+
+    def full_clean(self, *args, **kwargs):
+        super(RecipeIngridient, self).full_clean(*args, **kwargs)
+        if hasattr(self, 'cleaned_data') and self.cleaned_data.get('DELETE', False):
+            self._errors = ErrorDict()
+
     class Meta:
         ordering = ["id"]
 
@@ -122,7 +137,6 @@ class Recipe(models.Model):
             "un_div": ["PIECES"]
         }
         total_calories = 0
-
         for ingredient in self.ingredients.all():
             result = ingredient.product.calories * ingredient.weight
 
@@ -131,7 +145,7 @@ class Recipe(models.Model):
             elif ingredient.weight_unit in unit_type["big"]:
                 total_calories += result * 10
             elif ingredient.weight_unit in unit_type["un_div"]:
-                total_calories += result / 100 * ingredient.product.piece_weight
+                total_calories += int(result) / 100 * ingredient.product.piece_weight
 
         return total_calories
 
